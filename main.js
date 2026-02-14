@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
-const path = require('path');
 
 // Налаштування логування
 autoUpdater.logger = log;
@@ -17,8 +16,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
-    },
-    icon: path.join(__dirname, 'build/icon.png')
+    }
   });
 
   mainWindow.loadFile('index.html');

@@ -87,7 +87,7 @@ for file in "${FILES_TO_UPLOAD[@]}"; do
 done
 
 # Запит підтвердження
-echo -e "\n${YELLOW}Створити реліз ${TAG}?${NC} (y/n)"
+echo -e "\n${YELLOW}Створити реліз ${TAG}?${NC} [y/N]"
 read -r response
 if [[ ! "$response" =~ ^[Yy]$ ]]; then
     echo "Скасовано"
