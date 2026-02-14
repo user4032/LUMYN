@@ -105,9 +105,9 @@ autoUpdater.on('error', (err) => {
 });
 
 autoUpdater.on('download-progress', (progressObj) => {
-  let message = `Швидкість завантаження: ${progressObj.bytesPerSecond}`;
-  message += ` - Завантажено ${progressObj.percent}%`;
-  message += ` (${progressObj.transferred}/${progressObj.total})`;
+  let message = `Швидкість: ${Math.round(progressObj.bytesPerSecond / 1024)} KB/s`;
+  message += ` - Завантажено ${Math.round(progressObj.percent)}%`;
+  message += ` (${Math.round(progressObj.transferred / 1024 / 1024)}MB/${Math.round(progressObj.total / 1024 / 1024)}MB)`;
   log.info(message);
   sendStatusToWindow(message);
 });

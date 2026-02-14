@@ -51,7 +51,6 @@
           "arch": ["x64"]
         }
       ],
-      "icon": "build/icon.ico",
       "publisherName": "user4032"
     },
     "nsis": {
@@ -63,8 +62,7 @@
     },
     "mac": {
       "target": ["dmg", "zip"],
-      "category": "public.app-category.utilities",
-      "icon": "build/icon.icns"
+      "category": "public.app-category.utilities"
     },
     "linux": {
       "target": ["AppImage"],
