@@ -103,6 +103,16 @@ autoUpdater.on('update-downloaded', () => {
 });
 ```
 
+### ⚠️ Безпека
+
+**Примітка:** Демонстраційний код використовує `nodeIntegration: true` для простоти. 
+Для production додатків **обов'язково** використовуйте:
+- `nodeIntegration: false`
+- `contextIsolation: true`
+- Preload script з `contextBridge`
+
+Детальніше: [Electron Security Guide](https://www.electronjs.org/docs/latest/tutorial/security)
+
 ### 📝 Ліцензія
 
 Вкажіть вашу ліцензію тут.

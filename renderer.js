@@ -1,3 +1,7 @@
+// УВАГА: Цей код використовує nodeIntegration для простоти демонстрації.
+// Для production додатків використовуйте preload script з contextBridge.
+// Детальніше: https://www.electronjs.org/docs/latest/tutorial/context-isolation
+
 const { ipcRenderer } = require('electron');
 
 let version = 'loading...';

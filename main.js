@@ -14,6 +14,12 @@ function createWindow() {
     width: 900,
     height: 700,
     webPreferences: {
+      // УВАГА: Для демонстраційних цілей використовується nodeIntegration.
+      // Для production додатків рекомендується:
+      // - nodeIntegration: false
+      // - contextIsolation: true
+      // - використовувати preload script з contextBridge
+      // Детальніше: https://www.electronjs.org/docs/latest/tutorial/security
       nodeIntegration: true,
       contextIsolation: false
     }
