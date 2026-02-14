@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMYN</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 30px;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .header {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      color: #667eea;
+      font-size: 48px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .version {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .update-section {
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .update-controls {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-weight: 600;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .status {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+      font-size: 14px;
+      color: #555;
+      flex: 1;
+    }
+
+    .log-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .log-container {
+      flex: 1;
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      border: 1px solid #e0e0e0;
+      min-height: 200px;
+    }
+
+    .log-entry {
+      padding: 4px 0;
+      color: #555;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .features {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .features h3 {
+      color: #667eea;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .features ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .features li {
+      padding: 8px 0;
+      padding-left: 25px;
+      position: relative;
+      color: #555;
+    }
+
+    .features li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #667eea;
+      font-weight: bold;
+    }
+
+    /* Scrollbar styles */
+    .log-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .log-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    .log-container::-webkit-scrollbar-thumb {
+      background: #667eea;
+      border-radius: 4px;
+    }
+
+    .log-container::-webkit-scrollbar-thumb:hover {
+      background: #764ba2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>LUMYN</h1>
+      <div class="version">Версія: <span id="version">loading...</span></div>
+      <p>Desktop додаток з автоматичним оновленням</p>
+    </div>
+
+    <div class="content">
+      <div class="update-section">
+        <h2>Автооновлення</h2>
+        <div class="update-controls">
+          <button id="check-updates-btn">Перевірити оновлення</button>
+          <div class="status" id="update-status">Готово до перевірки оновлень</div>
+        </div>
+      </div>
+
+      <div class="log-section">
+        <h2>Журнал подій</h2>
+        <div class="log-container" id="update-log">
+          <div class="log-entry">Додаток запущено. Очікування на події...</div>
+        </div>
+      </div>
+
+      <div class="features">
+        <h3>Можливості:</h3>
+        <ul>
+          <li>Автоматична перевірка оновлень при запуску</li>
+          <li>Завантаження та встановлення оновлень в фоні</li>
+          <li>Підтримка Windows, macOS та Linux</li>
+          <li>Безпечне оновлення через GitHub Releases</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

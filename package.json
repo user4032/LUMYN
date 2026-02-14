@@ -1,0 +1,74 @@
+{
+  "name": "lumyn",
+  "version": "0.1.0",
+  "description": "LUMYN - Desktop application with auto-update",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder build",
+    "dist": "electron-builder build --publish never",
+    "release": "electron-builder build --publish always"
+  },
+  "keywords": [
+    "electron",
+    "auto-update"
+  ],
+  "author": {
+    "name": "user4032",
+    "email": "user4032@users.noreply.github.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "electron-log": "^5.0.1",
+    "electron-updater": "^6.1.7"
+  },
+  "build": {
+    "appId": "com.user4032.lumyn",
+    "productName": "LUMYN",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "renderer.js",
+      "index.html",
+      "package.json"
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "user4032",
+      "repo": "LUMYN",
+      "releaseType": "release"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "publisherName": "user4032"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "LUMYN"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "category": "public.app-category.utilities",
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Utility"
+    }
+  }
+}
