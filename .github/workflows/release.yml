@@ -1,0 +1,98 @@
+name: Release
+
+# Цей workflow запускається при створенні тегу версії (наприклад, v1.0.0)
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Відповідає тегам v1.0.0, v2.1.3, тощо
+
+permissions:
+  contents: write  # Необхідно для створення GitHub Releases
+
+jobs:
+  # Job для збірки на різних платформах
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: linux
+          - os: windows-latest
+            artifact_name: windows
+          - os: macos-latest
+            artifact_name: macos
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      # Приклад для Node.js/Electron проекту
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build project
+        run: npm run build
+        
+      # Збірка дистрибутивів (для Electron)
+      - name: Build distributables
+        run: npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+      # Завантаження артефактів для подальшого використання
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.artifact_name }}
+          path: dist/*
+          retention-days: 1
+          
+  # Job для створення GitHub Release
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      # Завантаження всіх артефактів з попереднього job
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+        
+      # Створення структури для релізу
+      - name: Prepare release assets
+        run: |
+          mkdir -p release-assets
+          find artifacts -type f -exec cp {} release-assets/ \;
+          ls -la release-assets/
+        
+      # Створення GitHub Release
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*
+          generate_release_notes: true  # Автоматична генерація release notes
+          draft: false
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') || contains(github.ref, 'rc') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      # Опціонально: відправка повідомлення про реліз
+      - name: Notify release
+        run: |
+          echo "✅ Release ${{ github.ref_name }} створено успішно!"
+          echo "Переглянути: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}"
