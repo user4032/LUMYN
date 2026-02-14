@@ -74,13 +74,32 @@ npm run dist
 ./create-release.sh
 ```
 
-### Крок 2: Завантажити файли з Actions artifacts
+### Крок 2: Зібрати файли релізу
 
-Якщо файли не збереглися локально, ви можете:
+Оскільки файли релізу не комітяться в git (через .gitignore), вам потрібно зібрати їх локально:
 
-1. Перейти в папку `release/` в цьому PR
-2. Скопіювати файли локально
-3. Або зібрати проект локально: `npm run dist`
+```bash
+# 1. Клонуйте репозиторій
+git clone https://github.com/user4032/LUMYN.git
+cd LUMYN
+
+# 2. Перейдіть на гілку з проектом
+git checkout copilot/add-auto-update-github-releases
+
+# 3. Встановіть залежності
+npm install
+
+# 4. Зберіть реліз
+npm run dist
+
+# Файли з'являться в папці release/:
+# - LUMYN Setup 0.1.0.exe
+# - latest.yml
+# - LUMYN-0.1.0.AppImage  
+# - latest-linux.yml
+```
+
+**Альтернатива:** Якщо налаштовано GitHub Actions, файли можна завантажити з artifacts workflow run.
 
 ---
 
@@ -101,9 +120,18 @@ release/
 └── README.md                            - Інструкції для release папки
 ```
 
-**ПРИМІТКА:** Ці файли НЕ комітяться в git (через .gitignore), тому вам потрібно:
-- Або зібрати їх локально: `npm run dist`
-- Або завантажити з GitHub Actions artifacts (якщо workflow запущений)
+**ПРИМІТКА:** Ці файли НЕ комітяться в git (через .gitignore), тому вам потрібно зібрати їх локально на своєму комп'ютері:
+
+```bash
+# На вашому локальному комп'ютері:
+git clone https://github.com/user4032/LUMYN.git
+cd LUMYN
+git checkout copilot/add-auto-update-github-releases
+npm install
+npm run dist
+```
+
+Після цього файли з'являться в папці `release/` і ви зможете створити GitHub Release.
 
 ---
 
