@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.12] - 2026-02-15
+
+### 🏷️ Release
+- Official release v1.0.12
+- Tagged for deployment and distribution
+
 ## [1.0.0] - 2026-02-15
 
 ### ✨ New Features
