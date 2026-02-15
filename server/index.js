@@ -2212,6 +2212,11 @@ io.on('connection', (socket) => {
   });
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', message: 'LUMYN server is running' });
+});
+
 // Connect to MongoDB (optional) and start server
 connectDB()
   .then((connected) => {
