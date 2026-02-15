@@ -109,6 +109,9 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
       document.body.style.setProperty('transition', '');
     }
     
+    // Dispatch event for time format changes
+    window.dispatchEvent(new CustomEvent('disgram-settings-changed'));
+    
     onClose();
   };
 

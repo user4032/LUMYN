@@ -697,13 +697,23 @@ app.get('/servers/my', requireAuth, async (req, res) => {
   return res.json({ ok: true, servers: serversObj });
 });
 
+// Generate unique invite code (max 10 characters for user input)
+const generateInviteCode = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 10; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+};
+
 app.post('/servers/create', requireAuth, async (req, res) => {
   const { name, channels, banner } = req.body || {};
   if (!name) return res.status(400).json({ error: 'Name is required' });
 
   try {
     const serverId = `srv_${Date.now()}`;
-    const inviteCode = `inv_${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    const inviteCode = generateInviteCode();
     
     const server = await Server.create({
       serverId,
@@ -743,7 +753,9 @@ app.post('/servers/join', requireAuth, async (req, res) => {
   const { code } = req.body || {};
   if (!code) return res.status(400).json({ error: 'Invite code is required' });
 
-  const server = await Server.findOne({ $or: [{ serverId: String(code).trim().toUpperCase() }, { inviteCode: String(code).trim() }] });
+  // Normalize code for case-insensitive matching
+  const normalizedCode = String(code).trim().toUpperCase();
+  const server = await Server.findOne({ inviteCode: normalizedCode });
   if (!server) return res.status(404).json({ error: 'Server not found' });
 
   // Перевіряємо, чи користувач вже є учасником

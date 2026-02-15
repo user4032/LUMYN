@@ -50,18 +50,51 @@ app.whenReady().then(() => {
   app.setName('LUMYN');
   createWindow();
 
-  autoUpdater.autoDownload = false;
-  autoUpdater.on('checking-for-update', () => sendUpdateStatus({ status: 'checking' }));
-  autoUpdater.on('update-available', (info) => sendUpdateStatus({ status: 'available', info }));
-  autoUpdater.on('update-not-available', (info) => sendUpdateStatus({ status: 'not-available', info }));
-  autoUpdater.on('error', (err) => sendUpdateStatus({ status: 'error', message: err?.message || 'Update error' }));
-  autoUpdater.on('download-progress', (progress) => sendUpdateStatus({ status: 'downloading', progress }));
-  autoUpdater.on('update-downloaded', () => sendUpdateStatus({ status: 'downloaded' }));
+  // Auto-updater configuration
+  autoUpdater.autoDownload = false; // Manual download for user control
+  autoUpdater.autoInstallOnAppQuit = true; // Install when app quits
+  
+  // Logging for diagnostics
+  autoUpdater.logger = require('electron-log');
+  autoUpdater.logger.transports.file.level = 'info';
+  
+  autoUpdater.on('checking-for-update', () => {
+    console.log('Checking for updates...');
+    sendUpdateStatus({ status: 'checking' });
+  });
+  
+  autoUpdater.on('update-available', (info) => {
+    console.log('Update available:', info.version);
+    sendUpdateStatus({ status: 'available', info });
+  });
+  
+  autoUpdater.on('update-not-available', (info) => {
+    console.log('No updates available');
+    sendUpdateStatus({ status: 'not-available', info });
+  });
+  
+  autoUpdater.on('error', (err) => {
+    console.error('Update error:', err);
+    sendUpdateStatus({ status: 'error', message: err?.message || 'Update error' });
+  });
+  
+  autoUpdater.on('download-progress', (progress) => {
+    console.log(`Download progress: ${Math.round(progress.percent)}%`);
+    sendUpdateStatus({ status: 'downloading', progress });
+  });
+  
+  autoUpdater.on('update-downloaded', (info) => {
+    console.log('Update downloaded:', info.version);
+    sendUpdateStatus({ status: 'downloaded' });
+  });
 
-  // Auto-check for updates on startup
+  // Auto-check for updates on startup (after 3 seconds)
   setTimeout(() => {
-    autoUpdater.checkForUpdates();
-  }, 2000);
+    console.log('Checking for updates on startup...');
+    autoUpdater.checkForUpdates().catch(err => {
+      console.error('Failed to check for updates:', err);
+    });
+  }, 3000);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

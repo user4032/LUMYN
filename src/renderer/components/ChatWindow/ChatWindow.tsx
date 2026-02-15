@@ -230,6 +230,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
   const [mentionStart, setMentionStart] = useState<number | null>(null);
   const [serverMembers, setServerMembers] = useState<MentionMember[]>([]);
   const [mentionAnchorEl, setMentionAnchorEl] = useState<HTMLElement | null>(null);
+  const [forceUpdateKey, setForceUpdateKey] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -979,6 +980,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
       return format(timestamp, `dd MMM ${timePattern}`, { locale });
     }
   };
+
+  // Listen for settings changes to re-render time display
+  React.useEffect(() => {
+    const handleSettingsChange = () => {
+      // Force re-render by triggering a state update
+      setForceUpdateKey(prev => prev + 1);
+    };
+    
+    window.addEventListener('disgram-settings-changed', handleSettingsChange);
+    return () => window.removeEventListener('disgram-settings-changed', handleSettingsChange);
+  }, []);
 
   if (!activeId) {
     const idleVariant = idleBadgeVariants[idleBadgeIndex % idleBadgeVariants.length];

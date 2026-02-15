@@ -66,6 +66,9 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
   const [channelType, setChannelType] = useState<'text' | 'voice'>('text');
   const [loading, setLoading] = useState(false);
   const [rolesDialogOpen, setRolesDialogOpen] = useState(false);
+  const [customInviteCode, setCustomInviteCode] = useState('');
+  const [editingCode, setEditingCode] = useState(false);
+  const [codeCopyMessage, setCodeCopyMessage] = useState('');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const bannerInputRef = React.useRef<HTMLInputElement>(null);
   
@@ -81,6 +84,9 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
       setServerDescription(server.description || '');
       setServerBanner(server.banner || '');
       setServerIcon(server.icon || '');
+      setCustomInviteCode(server.inviteCode || '');
+      setEditingCode(false);
+      setCodeCopyMessage('');
     }
   }, [server, open]);
 
@@ -375,20 +381,43 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                 <TextField
-                  value={server.inviteCode}
+                  value={customInviteCode}
                   fullWidth
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !editingCode }}
                   size="small"
+                  onChange={(e) => {
+                    const val = String(e.target.value).toUpperCase().slice(0, 10);
+                    setCustomInviteCode(val);
+                  }}
+                  disabled={!editingCode && !isOwner}
                 />
                 <Button
-                  onClick={() => {
-                    navigator.clipboard.writeText(server.inviteCode);
-                    alert(t('copiedToClipboard'));
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(customInviteCode);
+                      setCodeCopyMessage(t('copiedToClipboard'));
+                      setTimeout(() => setCodeCopyMessage(''), 2000);
+                    } catch (err) {
+                      console.error('Failed to copy:', err);
+                      setCodeCopyMessage('Failed to copy');
+                    }
                   }}
                   variant="outlined"
+                  sx={{
+                    minWidth: '100px',
+                  }}
                 >
-                  {t('copy')}
+                  {codeCopyMessage || t('copy')}
                 </Button>
+                {isOwner && (
+                  <Button
+                    onClick={() => setEditingCode(!editingCode)}
+                    variant="outlined"
+                    size="small"
+                  >
+                    {editingCode ? t('save') : t('edit')}
+                  </Button>
+                )}
               </Box>
             </Box>
 
