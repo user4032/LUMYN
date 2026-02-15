@@ -26,21 +26,48 @@ const ChatSettings = require('./models/ChatSettings');
 
 const app = express();
 const server = http.createServer(app);
+
+// Get allowed origins from environment
+const getAllowedOrigins = () => {
+  const apiUrl = process.env.VITE_API_URL;
+  const corsOrigin = process.env.SOCKET_IO_CORS_ORIGIN;
+  
+  const origins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000',
+    'http://127.0.0.1:5173',
+  ];
+  
+  if (apiUrl && apiUrl !== 'http://localhost:4777') {
+    origins.push(apiUrl);
+  }
+  
+  if (corsOrigin && corsOrigin !== '*') {
+    origins.push(corsOrigin);
+  }
+  
+  return corsOrigin === '*' ? '*' : origins;
+};
+
 const io = require('socket.io')(server, {
   cors: {
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: getAllowedOrigins(),
     methods: ['GET', 'POST']
   },
   maxHttpBufferSize: 50 * 1024 * 1024
 });
 
-const PORT = process.env.AUTH_PORT || 4777;
+const PORT = process.env.PORT || process.env.AUTH_PORT || 4777;
 const DEV_CODE = String(process.env.AUTH_DEV_CODE || '').toLowerCase() === 'true';
 
 // Зберігаємо активних користувачів {userId: Set<socketId>} для підтримки множинних вкладок
 const onlineUsers = new Map();
 
-app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:5174'] }));
+app.use(cors({ 
+  origin: getAllowedOrigins(),
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 
 const dataPath = path.join(__dirname, 'disgram.auth.json');

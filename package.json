@@ -10,6 +10,7 @@
     "dev:react": "vite",
     "dev:electron": "wait-on http://localhost:5173 && electron .",
     "dev:server": "node server/index.js",
+    "start": "node server/index.js",
     "build": "tsc && vite build && electron-builder",
     "build:win": "npm run build -- --win",
     "build:mac": "npm run build -- --mac",

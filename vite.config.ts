@@ -21,6 +21,17 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_URL || 'http://localhost:4777',
+        changeOrigin: true,
+      },
+      '/socket.io': {
+        target: process.env.VITE_API_URL || 'http://localhost:4777',
+        changeOrigin: true,
+        ws: true,
+      },
+    },
   },
   build: {
     outDir: 'dist/renderer',
