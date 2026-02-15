@@ -96,8 +96,8 @@ const CreateServerDialog: React.FC<CreateServerDialogProps> = ({ open, onClose, 
     >
       <DialogTitle sx={{ borderBottom: '1px solid', borderColor: 'divider', pb: 0 }}>
         <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="fullWidth">
-          <Tab label={t('createServer', language)} />
-          <Tab label={t('joinServer', language)} />
+          <Tab label={t('createServer')} />
+          <Tab label={t('joinServer')} />
         </Tabs>
       </DialogTitle>
 
@@ -120,11 +120,11 @@ const CreateServerDialog: React.FC<CreateServerDialogProps> = ({ open, onClose, 
 
           <Box>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 600 }}>
-              {t('serverName', language)}
+              {t('serverName')}
             </Typography>
             <TextField
               fullWidth
-              placeholder={t('serverNamePlaceholder', language)}
+              placeholder={t('serverNamePlaceholder')}
               value={serverName}
               onChange={(e) => setServerName(e.target.value)}
               autoFocus
@@ -135,7 +135,7 @@ const CreateServerDialog: React.FC<CreateServerDialogProps> = ({ open, onClose, 
               }}
             />
             <Typography variant="caption" sx={{ mt: 1, display: 'block', color: 'text.secondary' }}>
-              {t('serverRenameHint', language)}
+              {t('serverRenameHint')}
             </Typography>
           </Box>
 
@@ -147,13 +147,13 @@ const CreateServerDialog: React.FC<CreateServerDialogProps> = ({ open, onClose, 
             }}
           >
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              💡 {t('serverAutoChannels', language)}
+              💡 {t('serverAutoChannels')}
             </Typography>
           </Box>
 
           <Divider>
             <Typography variant="caption" color="text.secondary">
-              {t('or', language)}
+              {t('or')}
             </Typography>
           </Divider>
 
@@ -163,7 +163,7 @@ const CreateServerDialog: React.FC<CreateServerDialogProps> = ({ open, onClose, 
             onClick={() => setTemplatesOpen(true)}
             sx={{ py: 1.5 }}
           >
-            {t('useTemplate', language)}
+            {t('useTemplate')}
           </Button>
         </Box>
         ) : (
@@ -184,7 +184,7 @@ const CreateServerDialog: React.FC<CreateServerDialogProps> = ({ open, onClose, 
 
           <Box>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 600 }}>
-              {t('inviteCode', language)}
+              {t('inviteCode')}
             </Typography>
             <TextField
               fullWidth
@@ -199,7 +199,7 @@ const CreateServerDialog: React.FC<CreateServerDialogProps> = ({ open, onClose, 
               }}
             />
             <Typography variant="caption" sx={{ mt: 1, display: 'block', color: 'text.secondary' }}>
-              {t('enterInviteCode', language)}
+              {t('enterInviteCode')}
             </Typography>
           </Box>
         </Box>
@@ -208,7 +208,7 @@ const CreateServerDialog: React.FC<CreateServerDialogProps> = ({ open, onClose, 
 
       <DialogActions sx={{ p: 2, pt: 0 }}>
         <Button onClick={handleClose} color="inherit">
-          {t('cancel', language)}
+          {t('cancel')}
         </Button>
         {tab === 0 ? (
         <Button
@@ -222,7 +222,7 @@ const CreateServerDialog: React.FC<CreateServerDialogProps> = ({ open, onClose, 
             },
           }}
         >
-          {t('createServer', language)}
+          {t('createServer')}
         </Button>
         ) : (
         <Button
@@ -236,7 +236,7 @@ const CreateServerDialog: React.FC<CreateServerDialogProps> = ({ open, onClose, 
             },
           }}
         >
-          {t('join', language)}
+          {t('join')}
         </Button>
         )}
       </DialogActions>

@@ -132,7 +132,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
     setChatTextScale(1);
     
     setConfirmReset(false);
-    alert(t('settingsReset', language));
+    alert(t('settingsReset'));
   };
 
   const handleLogout = () => {
@@ -177,14 +177,14 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
       }}
     >
       <DialogTitle sx={{ borderBottom: '1px solid', borderColor: 'divider', fontWeight: 600 }}>
-        {t('settings', language)}
+        {t('settings')}
       </DialogTitle>
       
       <DialogContent sx={{ mt: 2 }}>
         {/* Налаштування інтерфейсу */}
         <Box sx={{ mb: 3 }}>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            {t('interface', language)}
+            {t('interface')}
           </Typography>
           
           <FormControlLabel
@@ -197,7 +197,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
                 }}
               />
             }
-            label={t('darkTheme', language)}
+            label={t('darkTheme')}
           />
           
           <FormControlLabel
@@ -207,7 +207,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
                 onChange={(e) => setCompactMode(e.target.checked)}
               />
             }
-            label={t('compactMode', language)}
+            label={t('compactMode')}
           />
           
           <FormControlLabel
@@ -217,15 +217,15 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
                 onChange={(e) => setAnimations(e.target.checked)}
               />
             }
-            label={t('animations', language)}
+            label={t('animations')}
           />
 
           <Box sx={{ mt: 2 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              {t('chatTextScale', language)}
+              {t('chatTextScale')}
             </Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {t('chatTextScaleHint', language)}
+              {t('chatTextScaleHint')}
             </Typography>
             <Box sx={{ mt: 1.5, px: 1 }}>
               <Slider
@@ -300,18 +300,18 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
         {/* Налаштування часу та мови */}
         <Box sx={{ mb: 3 }}>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            {t('time-language', language)}
+            {t('time-language')}
           </Typography>
           
           <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-            <InputLabel>{t('timeFormat', language)}</InputLabel>
+            <InputLabel>{t('timeFormat')}</InputLabel>
             <Select
               value={timeFormat}
-              label={t('timeFormat', language)}
+              label={t('timeFormat')}
               onChange={(e) => setTimeFormat(e.target.value as '12' | '24')}
             >
-              <MenuItem value="24">{t('timeFormat24', language)}</MenuItem>
-              <MenuItem value="12">{t('timeFormat12', language)}</MenuItem>
+              <MenuItem value="24">{t('timeFormat24')}</MenuItem>
+              <MenuItem value="12">{t('timeFormat12')}</MenuItem>
             </Select>
           </FormControl>
 
@@ -322,18 +322,18 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
                 onChange={(e) => setShowSeconds(e.target.checked)}
               />
             }
-            label={t('showSeconds', language)}
+            label={t('showSeconds')}
           />
 
           <FormControl fullWidth size="small" sx={{ mt: 2 }}>
-            <InputLabel>{t('language', language)}</InputLabel>
+            <InputLabel>{t('language')}</InputLabel>
             <Select
               value={language}
-              label={t('language', language)}
+              label={t('language')}
               onChange={(e) => dispatch(setLanguage(e.target.value as Language))}
             >
-              <MenuItem value="uk">{t('ukrainian', language)}</MenuItem>
-              <MenuItem value="en">{t('english', language)}</MenuItem>
+              <MenuItem value="uk">{t('ukrainian')}</MenuItem>
+              <MenuItem value="en">{t('english')}</MenuItem>
             </Select>
           </FormControl>
         </Box>
@@ -343,7 +343,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
         {/* Налаштування сповіщень */}
         <Box sx={{ mb: 3 }}>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            {t('notifications', language)}
+            {t('notifications')}
           </Typography>
           
           <FormControlLabel
@@ -353,7 +353,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
                 onChange={(e) => setSoundEnabled(e.target.checked)}
               />
             }
-            label={t('soundNotif', language)}
+            label={t('soundNotif')}
           />
           
           <FormControlLabel
@@ -363,12 +363,12 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
                 onChange={(e) => setDesktopNotifications(e.target.checked)}
               />
             }
-            label={t('desktopNotif', language)}
+            label={t('desktopNotif')}
           />
           
           <FormControlLabel
             control={<Switch />}
-            label={t('messagePreview', language)}
+            label={t('messagePreview')}
           />
         </Box>
 
@@ -377,7 +377,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
         {/* Про додаток */}
         <Box>
           <Typography variant="h6" sx={{ mb: 2 }}>
-            {t('about', language)}
+            {t('about')}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             LUMYN v{appVersion}
@@ -391,18 +391,18 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
       <DialogActions sx={{ borderTop: '1px solid', borderColor: 'divider', px: 3, py: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button onClick={handleResetSettings} variant="outlined" color="warning">
-            {t('resetSettings', language)}
+            {t('resetSettings')}
           </Button>
           <Button onClick={handleLogout} variant="outlined" color="error">
-            {t('logout', language)}
+            {t('logout')}
           </Button>
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button onClick={onClose} variant="outlined">
-            {t('cancel', language)}
+            {t('cancel')}
           </Button>
           <Button onClick={handleSave} variant="contained" color="primary">
-            {t('save', language)}
+            {t('save')}
           </Button>
         </Box>
       </DialogActions>
@@ -410,10 +410,10 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
       {/* Діалог підтвердження скидання налаштувань */}
       <ConfirmDialog
         open={confirmReset}
-        title={t('resetSettings', language)}
-        message={t('resetSettingsConfirm', language)}
-        confirmText={t('reset', language)}
-        cancelText={t('cancel', language)}
+        title={t('resetSettings')}
+        message={t('resetSettingsConfirm')}
+        confirmText={t('reset')}
+        cancelText={t('cancel')}
         onConfirm={confirmResetSettings}
         onCancel={() => setConfirmReset(false)}
         confirmColor="warning"
@@ -422,10 +422,10 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
       {/* Діалог підтвердження виходу */}
       <ConfirmDialog
         open={confirmLogout}
-        title={t('logout', language)}
-        message={t('logoutConfirm', language)}
-        confirmText={t('logout', language)}
-        cancelText={t('cancel', language)}
+        title={t('logout')}
+        message={t('logoutConfirm')}
+        confirmText={t('logout')}
+        cancelText={t('cancel')}
         onConfirm={confirmLogoutAction}
         onCancel={() => setConfirmLogout(false)}
         confirmColor="error"

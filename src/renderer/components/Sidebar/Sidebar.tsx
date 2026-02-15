@@ -105,15 +105,15 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
       if (response.ok) {
         dispatch(addServer(response.server));
         setCreateServerOpen(false);
-        alert(`${t('serverCreated', language)}\n${t('inviteCode', language)}: ${response.server.inviteCode}`);
+        alert(`${t('serverCreated')}\n${t('inviteCode')}: ${response.server.inviteCode}`);
       } else {
-        alert(t('serverCreationFailed', language) + (response.error ? `\n${response.error}` : ''));
+        alert(t('serverCreationFailed') + (response.error ? `\n${response.error}` : ''));
       }
     } catch (error) {
       console.error('Failed to create server:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
       alert(
-        `${t('serverCreationFailed', language)}\n\n` +
+        `${t('serverCreationFailed')}\n\n` +
         `${errorMessage}\n\n` +
         `Hint: Make sure backend server is running (node server/index.js)`
       );
@@ -130,15 +130,15 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
       if (response.ok) {
         dispatch(addServer(response.server));
         setCreateServerOpen(false);
-        alert(t('serverJoined', language));
+        alert(t('serverJoined'));
       } else {
-        alert(t('serverJoinFailed', language) + (response.error ? `\n${response.error}` : ''));
+        alert(t('serverJoinFailed') + (response.error ? `\n${response.error}` : ''));
       }
     } catch (error) {
       console.error('Failed to join server:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
       alert(
-        `${t('serverJoinFailed', language)}\n\n` +
+        `${t('serverJoinFailed')}\n\n` +
         `${errorMessage}\n\n` +
         `Hint: Make sure backend server is running (node server/index.js)`
       );
@@ -162,7 +162,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
       >
         {/* Лого з індикатором повідомлень */}
         <Box sx={{ mb: 2, position: 'relative' }}>
-          <Tooltip title={t('home', language)} placement="right">
+          <Tooltip title={t('home')} placement="right">
             <Box
               onClick={(e) => {
                 if (unreadCount > 0) {
@@ -235,7 +235,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
         </Box>
 
         {/* Навігація */}
-        <Tooltip title={t('chatsLabel', language)} placement="right">
+        <Tooltip title={t('chatsLabel')} placement="right">
           <IconButton
             onClick={() => {
               onViewChange('chats');
@@ -260,7 +260,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
         </Tooltip>
 
         {/* Threads temporarily unavailable */}
-        <Tooltip title={`${t('threadsLabel', language)} - ${t('unavailable', language)}`} placement="right">
+        <Tooltip title={`${t('threadsLabel')} - ${t('unavailable')}`} placement="right">
           <span>
             <IconButton
               disabled
@@ -278,7 +278,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
           </span>
         </Tooltip>
 
-        <Tooltip title={serversExpanded ? t('hideServers', language) : t('serversLabel', language)} placement="right">
+        <Tooltip title={serversExpanded ? t('hideServers') : t('serversLabel')} placement="right">
           <IconButton
             onClick={() => {
               if (!serversExpanded) {
@@ -456,7 +456,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
                         </Typography>
                       )}
                       <Typography variant="caption" sx={{ color: 'text.secondary', mt: 2, display: 'block' }}>
-                        {server.members?.length || 1} {t('members', language) || 'members'}
+                        {server.members?.length || 1} {t('members') || 'members'}
                       </Typography>
                     </Box>
                   </Paper>
@@ -465,7 +465,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
             ))}
             
             {/* Кнопка створення сервера */}
-            <Tooltip title={t('addServer', language)} placement="right">
+            <Tooltip title={t('addServer')} placement="right">
               <IconButton
                 onClick={() => setCreateServerOpen(true)}
                 sx={(theme) => ({
@@ -494,7 +494,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
         <Box sx={{ flexGrow: 1 }} />
 
         {/* Нижні кнопки */}
-        <Tooltip title={t('notificationsLabel', language)} placement="right">
+        <Tooltip title={t('notificationsLabel')} placement="right">
           <IconButton
             onClick={() => setShowNotifications(!showNotifications)}
             sx={(theme) => ({
@@ -514,7 +514,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
           </IconButton>
         </Tooltip>
 
-        <Tooltip title={t('settingsLabel', language)} placement="right">
+        <Tooltip title={t('settingsLabel')} placement="right">
           <IconButton
             onClick={() => setSettingsOpen(true)}
             sx={(theme) => ({

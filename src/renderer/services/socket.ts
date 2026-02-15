@@ -130,6 +130,11 @@ class SocketService {
     this.socket.on('user:typing', callback);
   }
 
+  onNotification(callback: (data: any) => void) {
+    if (!this.socket) return;
+    this.socket.on('notification:new', callback);
+  }
+
   getSocket() {
     return this.socket;
   }

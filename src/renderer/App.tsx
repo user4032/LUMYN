@@ -271,7 +271,7 @@ const App: React.FC = () => {
       });
 
       // Listen for new notifications
-      socketService.io.on('notification:new', (notification: any) => {
+      socketService.onNotification((notification: any) => {
         dispatch(addNotification({
           id: notification.id,
           type: notification.type,

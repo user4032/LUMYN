@@ -76,8 +76,8 @@ const NotificationsDialog: React.FC<NotificationsDialogProps> = ({ open, onClose
         const hasContent = !!message.content?.trim();
         const hasAttachments = !!(message.attachments && message.attachments.length > 0);
         const fallbackText = hasAttachments
-          ? t('photo', language)
-          : t('notifSentMessage', language);
+          ? t('photo')
+          : t('notifSentMessage');
 
         items.push({
           id: message.id,
@@ -136,7 +136,7 @@ const NotificationsDialog: React.FC<NotificationsDialogProps> = ({ open, onClose
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="h6">{t('notificationsLabel', language)}</Typography>
+          <Typography variant="h6">{t('notificationsLabel')}</Typography>
           {unreadCount > 0 && (
             <Box
               sx={{
@@ -158,7 +158,7 @@ const NotificationsDialog: React.FC<NotificationsDialogProps> = ({ open, onClose
           <Box sx={{ p: 4, textAlign: 'center' }}>
             <NotificationsIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
             <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-              {t('noNotifications', language)}
+              {t('noNotifications')}
             </Typography>
           </Box>
         ) : (

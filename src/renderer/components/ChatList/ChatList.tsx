@@ -181,10 +181,10 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
       <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
-            {showHiddenChats ? t('hiddenChats', language) : t('chats', language)}
+            {showHiddenChats ? t('hiddenChats') : t('chats')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <Tooltip title={showHiddenChats ? t('showChats', language) : t('showHiddenChats', language)}>
+            <Tooltip title={showHiddenChats ? t('showChats') : t('showHiddenChats')}>
               <IconButton 
                 size="small" 
                 onClick={() => setShowHiddenChats(!showHiddenChats)}
@@ -203,7 +203,7 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
         <TextField
           fullWidth
           size="small"
-          placeholder={t('searchChats', language)}
+          placeholder={t('searchChats')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           InputProps={{
@@ -285,7 +285,7 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
                 primary={
                   <Box component="span" sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                     <Typography component="span" variant="body1" sx={{ fontWeight: 600, color: 'text.primary' }}>
-                      {chat.type === 'saved' ? t('savedMessages', language) : chat.name}
+                      {chat.type === 'saved' ? t('savedMessages') : chat.name}
                     </Typography>
                     {lastMessage && (
                       <Typography component="span" variant="caption" sx={{ color: 'text.secondary' }}>
@@ -311,9 +311,9 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
                         ? (lastMessage.content?.trim()
                           ? lastMessage.content
                           : (lastMessage.attachments && lastMessage.attachments.length > 0)
-                            ? t('photo', language)
-                            : t('typeMessage', language))
-                        : t('typeMessage', language)}
+                            ? t('photo')
+                            : t('typeMessage'))
+                        : t('typeMessage')}
                     </Typography>
                     {chat.unreadCount > 0 && (
                       <Box
@@ -338,8 +338,8 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
 
       {filteredChats.length === 0 && searchQuery.trim().length === 0 && (
         <Box sx={{ p: 2, color: 'text.secondary' }}>
-          <Typography variant="body2">{t('noChats', language)}</Typography>
-          <Typography variant="caption">{t('noChatsHint', language)}</Typography>
+          <Typography variant="body2">{t('noChats')}</Typography>
+          <Typography variant="caption">{t('noChatsHint')}</Typography>
         </Box>
       )}
 
@@ -378,8 +378,8 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
           </ListItemIcon>
           <Typography variant="body2">
             {contextMenu && chats.find((chat) => chat.id === contextMenu.chatId)?.isPinned
-              ? t('unpinChat', language)
-              : t('pinChat', language)}
+              ? t('unpinChat')
+              : t('pinChat')}
           </Typography>
         </MenuItem>
         
@@ -387,14 +387,14 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
           <ListItemIcon>
             <MuteIcon fontSize="small" />
           </ListItemIcon>
-          <Typography variant="body2">{t('muteChat', language)}</Typography>
+          <Typography variant="body2">{t('muteChat')}</Typography>
         </MenuItem>
         
         <MenuItem onClick={handleHideChat}>
           <ListItemIcon>
             <VisibilityOffIcon fontSize="small" />
           </ListItemIcon>
-          <Typography variant="body2">{t('hideChat', language)}</Typography>
+          <Typography variant="body2">{t('hideChat')}</Typography>
         </MenuItem>
         
         {contextMenu && contextMenu.chatId !== 'saved_messages' && (
@@ -405,7 +405,7 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
               <ListItemIcon>
                 <DeleteIcon fontSize="small" sx={{ color: 'error.main' }} />
               </ListItemIcon>
-              <Typography variant="body2">{t('deleteChat', language)}</Typography>
+              <Typography variant="body2">{t('deleteChat')}</Typography>
             </MenuItem>
           </>
         )}
@@ -413,10 +413,10 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
 
       <ConfirmDialog
         open={confirmDelete}
-        title={t('deleteChat', language)}
-        message={t('deleteChatConfirm', language)}
-        confirmText={t('delete', language)}
-        cancelText={t('cancel', language)}
+        title={t('deleteChat')}
+        message={t('deleteChatConfirm')}
+        confirmText={t('delete')}
+        cancelText={t('cancel')}
         onConfirm={confirmDeleteChat}
         onCancel={cancelDeleteChat}
         confirmColor="error"

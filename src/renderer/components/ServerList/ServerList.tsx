@@ -102,13 +102,13 @@ const ServerList: React.FC<ServerListProps> = ({ onSelectServer, selectedServer 
 
   const getCategoryLabel = (category: string) => {
     if (category === 'Текстові' || category.toLowerCase() === 'text') {
-      return t('textCategory', language);
+      return t('textCategory');
     }
     if (category === 'Голосові' || category.toLowerCase() === 'voice') {
-      return t('voiceCategory', language);
+      return t('voiceCategory');
     }
     if (category === 'Без категорії' || category.toLowerCase() === 'no category') {
-      return t('noCategory', language);
+      return t('noCategory');
     }
     return category;
   };
@@ -130,17 +130,17 @@ const ServerList: React.FC<ServerListProps> = ({ onSelectServer, selectedServer 
         {
           id: `c${Date.now()}`,
           serverId: 'temp',
-          name: t('defaultTextChannel', language),
+          name: t('defaultTextChannel'),
           type: 'text',
-          category: t('textCategory', language),
+          category: t('textCategory'),
           unreadCount: 0,
         },
         {
           id: `c${Date.now() + 1}`,
           serverId: 'temp',
-          name: t('defaultVoiceChannel', language),
+          name: t('defaultVoiceChannel'),
           type: 'voice',
-          category: t('voiceCategory', language),
+          category: t('voiceCategory'),
           unreadCount: 0,
         },
       ]);
@@ -155,7 +155,7 @@ const ServerList: React.FC<ServerListProps> = ({ onSelectServer, selectedServer 
         };
         dispatch(addServer(created));
         setCreateServerOpen(false);
-        alert(`${t('inviteCode', language)}: ${response.server.inviteCode}`);
+        alert(`${t('inviteCode')}: ${response.server.inviteCode}`);
       } else if (response.error) {
         alert(`Помилка: ${response.error}`);
       }
@@ -202,7 +202,7 @@ const ServerList: React.FC<ServerListProps> = ({ onSelectServer, selectedServer 
       >
         <Box sx={{ p: 2 }}>
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'text.primary' }}>
-            {t('serversLabel', language)}
+            {t('serversLabel')}
           </Typography>
         </Box>
 
@@ -231,7 +231,7 @@ const ServerList: React.FC<ServerListProps> = ({ onSelectServer, selectedServer 
                 </Avatar>
                 <ListItemText
                   primary={server.name}
-                  secondary={`${server.channels.length} ${t('channels', language)}`}
+                  secondary={`${server.channels.length} ${t('channels')}`}
                   primaryTypographyProps={{
                     sx: { color: 'text.primary', fontWeight: 600 },
                   }}

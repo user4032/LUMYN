@@ -70,13 +70,13 @@ const UserProfileDialog: React.FC<UserProfileDialogProps> = ({ open, onClose, us
   };
 
   const statusLabels = {
-    online: t('statusOnline', language),
-    offline: t('statusOffline', language),
-    idle: t('idle', language),
-    dnd: t('dnd', language),
-    away: t('away', language),
-    busy: t('busy', language),
-    invisible: t('invisible', language),
+    online: t('statusOnline'),
+    offline: t('statusOffline'),
+    idle: t('idle'),
+    dnd: t('dnd'),
+    away: t('away'),
+    busy: t('busy'),
+    invisible: t('invisible'),
   } as const;
 
   React.useEffect(() => {

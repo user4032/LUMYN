@@ -812,8 +812,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
   };
 
   const handleCall = (type: 'audio' | 'video') => {
-    const callType = type === 'audio' ? t('audio', language) : t('video', language);
-    alert(`${callType} ${t('callInProgress', language)} ${chat?.name}...\n${t('featureInDev', language)}`);
+    const callType = type === 'audio' ? t('audio') : t('video');
+    alert(`${callType} ${t('callInProgress')} ${chat?.name}...\n${t('featureInDev')}`);
   };
 
   const handleMoreMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -834,7 +834,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
     if (contextMenu && activeId) {
       const messageLink = `${window.location.origin}?chat=${activeId}&messageId=${contextMenu.messageId}`;
       navigator.clipboard.writeText(messageLink).then(() => {
-        alert(t('messageLinkCopied', language));
+        alert(t('messageLinkCopied'));
       }).catch(() => {
         alert('Failed to copy message link');
       });
@@ -940,7 +940,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
 
   const confirmDeleteChatAction = () => {
     if (activeId) {
-      alert(t('deleteChatInDev', language));
+      alert(t('deleteChatInDev'));
     }
     setConfirmDeleteChat(false);
   };
@@ -1022,10 +1022,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
         >
         </Box>
         <Typography variant="h5" sx={{ color: 'text.secondary' }}>
-          {t('selectChat', language)}
+          {t('selectChat')}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {t('selectChatHint', language)}
+          {t('selectChatHint')}
         </Typography>
       </Box>
     );
@@ -1098,42 +1098,42 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
             </Typography>
             {currentChannel ? (
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                {currentChannel.type === 'text' ? t('textChannel', language) : t('voiceChannel', language)}
+                {currentChannel.type === 'text' ? t('textChannel') : t('voiceChannel')}
               </Typography>
             ) : chat?.status && chat.status !== 'offline' ? (
               <Typography variant="caption" sx={{ color: 'success.main' }}>
-                {t(chat.status, language)}
+                {t(chat.status)}
               </Typography>
             ) : (
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                {chat?.type === 'group' && `${messages.length} ${t('messages', language)}`}
+                {chat?.type === 'group' && `${messages.length} ${t('messages')}`}
               </Typography>
             )}
           </Box>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, position: 'absolute', right: 16 }}>
-          <Tooltip title={t('pinnedMessages', language)}>
+          <Tooltip title={t('pinnedMessages')}>
             <IconButton onClick={() => setPinnedMessagesDialogOpen(true)} sx={{ color: 'text.secondary' }}>
               <PinIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t('searchMessages', language)}>
+          <Tooltip title={t('searchMessages')}>
             <IconButton onClick={() => setMessageSearchDialogOpen(true)} sx={{ color: 'text.secondary' }}>
               <SearchIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t('audioCall', language)}>
+          <Tooltip title={t('audioCall')}>
             <IconButton onClick={() => handleCall('audio')} sx={{ color: 'text.secondary' }}>
               <BrutalCallIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t('videoCall', language)}>
+          <Tooltip title={t('videoCall')}>
             <IconButton onClick={() => handleCall('video')} sx={{ color: 'text.secondary' }}>
               <BrutalVideoIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t('more', language)}>
+          <Tooltip title={t('more')}>
             <IconButton onClick={handleMoreMenu} sx={{ color: 'text.secondary' }}>
               <BrutalMoreIcon />
             </IconButton>
@@ -1188,10 +1188,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
             >
               <PinIcon fontSize="small" />
               <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                {t('pinMessage', language)}:
+                {t('pinMessage')}:
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {pinnedMessage.content || t('photo', language)}
+                {pinnedMessage.content || t('photo')}
               </Typography>
             </Box>
           ) : null;
@@ -1453,7 +1453,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
                       }}
                     >
                       {getTimeDisplay(message.timestamp)}
-                      {message.edited && <span style={{ marginLeft: 8 }}>{t('edited', language)}</span>}
+                      {message.edited && <span style={{ marginLeft: 8 }}>{t('edited')}</span>}
                     </Typography>
                   </Paper>
                 </Box>
@@ -1476,10 +1476,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
         {editingMessage && (
           <Box sx={{ mb: 1, p: 1, bgcolor: 'action.hover', borderRadius: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="caption" sx={{ color: 'primary.main' }}>
-              {t('editMessage', language)}
+              {t('editMessage')}
             </Typography>
             <Button size="small" onClick={handleCancelEdit}>
-              {t('cancel', language)}
+              {t('cancel')}
             </Button>
           </Box>
         )}
@@ -1487,21 +1487,21 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
           <Box sx={{ mb: 1, p: 1, bgcolor: 'action.selected', borderRadius: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderLeft: '3px solid', borderColor: 'primary.main' }}>
             <Box>
               <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 600 }}>
-                {t('replyTo', language)} {replyingTo.userName}
+                {t('replyTo')} {replyingTo.userName}
               </Typography>
               <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 400 }}>
                 {replyingTo.content}
               </Typography>
             </Box>
             <Button size="small" onClick={handleCancelReply}>
-              {t('cancel', language)}
+              {t('cancel')}
             </Button>
           </Box>
         )}
         {currentChannel && currentChannel.type === 'voice' ? (
           <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: 2, textAlign: 'center' }}>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {t('voiceChannelNotice', language)}
+              {t('voiceChannelNotice')}
             </Typography>
           </Box>
         ) : (
@@ -1509,7 +1509,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
             {selectedFiles.length > 0 && (
               <Box sx={{ mb: 1, p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
                 <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 1 }}>
-                  {t('selectedFiles', language)} ({selectedFiles.length})
+                  {t('selectedFiles')} ({selectedFiles.length})
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                   {selectedFiles.map((file, index) => (
@@ -1528,7 +1528,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
               fullWidth
               multiline
               maxRows={4}
-              placeholder={editingMessage ? t('editMessagePlaceholder', language) : t('typeMessagePlaceholder', language)}
+              placeholder={editingMessage ? t('editMessagePlaceholder') : t('typeMessagePlaceholder')}
               value={messageText}
               onChange={handleInputChange}
               onKeyDown={handleInputKeyDown}
@@ -1536,7 +1536,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Tooltip title={t('attachFile', language)}>
+                    <Tooltip title={t('attachFile')}>
                       <IconButton size="small" onClick={() => fileInputRef.current?.click()}>
                         <BrutalAttachIcon />
                       </IconButton>
@@ -1554,7 +1554,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
                         <Box sx={{ fontWeight: 700, fontSize: '0.85rem' }}>GIF</Box>
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title={t('emoji', language)}>
+                    <Tooltip title={t('emoji')}>
                       <IconButton size="small" onClick={(e) => setEmojiPickerAnchor(e.currentTarget)}>
                         <BrutalEmojiIcon />
                       </IconButton>
@@ -1674,26 +1674,26 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
       >
         <MenuItem onClick={handleReplyMessage}>
           <ReplyIcon sx={{ mr: 1 }} fontSize="small" />
-          {t('reply', language)}
+          {t('reply')}
         </MenuItem>
         {canEditMessage && (
           <MenuItem onClick={handleEditMessage}>
             <EditIcon sx={{ mr: 1 }} fontSize="small" />
-            {t('edit', language)}
+            {t('edit')}
           </MenuItem>
         )}
         <MenuItem onClick={handlePinMessage}>
           <PinIcon sx={{ mr: 1 }} fontSize="small" />
-          {t('pinMessage', language)}
+          {t('pinMessage')}
         </MenuItem>
         <MenuItem onClick={handleCopyMessageLink}>
           <IconButton size="small" sx={{ mr: -0.5 }}>📋</IconButton>
-          {t('copyMessageLink', language)}
+          {t('copyMessageLink')}
         </MenuItem>
         {canEditMessage && (
           <MenuItem onClick={handleDeleteMessage} sx={{ color: 'error.main' }}>
             <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
-            {t('delete', language)}
+            {t('delete')}
           </MenuItem>
         )}
       </Menu>
@@ -1708,10 +1708,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
       >
         <MenuItem onClick={handlePinChat}>
           <PinIcon sx={{ mr: 1 }} fontSize="small" />
-          {chat?.isPinned ? t('unpinChat', language) : t('pinChat', language)}
+          {chat?.isPinned ? t('unpinChat') : t('pinChat')}
         </MenuItem>
         <MenuItem onClick={handleMuteChat}>
-          {chat?.isMuted ? '🔔' : '🔕'} {chat?.isMuted ? t('unmuteChat', language) : t('muteChat', language)}
+          {chat?.isMuted ? '🔔' : '🔕'} {chat?.isMuted ? t('unmuteChat') : t('muteChat')}
         </MenuItem>
         <MenuItem
           onClick={handleClearHistory}
@@ -1721,11 +1721,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
             },
           }}
         >
-          {t('clearHistory', language)}
+          {t('clearHistory')}
         </MenuItem>
         <MenuItem onClick={handleDeleteChat} sx={{ color: 'error.main' }}>
           <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
-          {t('deleteChat', language)}
+          {t('deleteChat')}
         </MenuItem>
       </Menu>
 
@@ -1768,7 +1768,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
             <Box
               component="img"
               src={imagePreview}
-              alt={t('photo', language)}
+              alt={t('photo')}
               sx={{ maxWidth: '90vw', maxHeight: '90vh', display: 'block' }}
             />
           )}
@@ -1778,10 +1778,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
       {/* Діалог підтвердження очищення історії */}
       <ConfirmDialog
         open={confirmClearHistory}
-        title={t('clearHistory', language)}
-        message={t('clearHistoryConfirm', language)}
-        confirmText={t('clear', language)}
-        cancelText={t('cancel', language)}
+        title={t('clearHistory')}
+        message={t('clearHistoryConfirm')}
+        confirmText={t('clear')}
+        cancelText={t('cancel')}
         onConfirm={confirmClearHistoryAction}
         onCancel={() => setConfirmClearHistory(false)}
         confirmColor="error"
@@ -1790,10 +1790,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
       {/* Діалог підтвердження видалення чату */}
       <ConfirmDialog
         open={confirmDeleteChat}
-        title={t('deleteChat', language)}
-        message={t('deleteChatConfirm', language)}
-        confirmText={t('delete', language)}
-        cancelText={t('cancel', language)}
+        title={t('deleteChat')}
+        message={t('deleteChatConfirm')}
+        confirmText={t('delete')}
+        cancelText={t('cancel')}
         onConfirm={confirmDeleteChatAction}
         onCancel={() => setConfirmDeleteChat(false)}
         confirmColor="error"

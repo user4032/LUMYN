@@ -129,15 +129,15 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
     
     // Валідація username
     if (!trimmedUsername) {
-      setUsernameError(t('usernameRequired', language));
+      setUsernameError(t('usernameRequired'));
       return;
     }
     if (trimmedUsername.length < 4) {
-      setUsernameError(t('usernameMin', language));
+      setUsernameError(t('usernameMin'));
       return;
     }
     if (!validateUsernameFormat(trimmedUsername)) {
-      setUsernameError(t('usernameInvalidChars', language));
+      setUsernameError(t('usernameInvalidChars'));
       return;
     }
     
@@ -148,7 +148,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
     try {
       const token = localStorage.getItem('disgram_auth_token');
       if (!token) {
-        throw new Error(t('notAuthenticated', language));
+        throw new Error(t('notAuthenticated'));
       }
 
       const profileData: any = {
@@ -260,7 +260,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
         onClose();
       }
     } catch (err: any) {
-      setSaveError(err.message || t('saveFailed', language));
+      setSaveError(err.message || t('saveFailed'));
     } finally {
       setIsSaving(false);
     }
@@ -343,7 +343,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
       }}
     >
       <DialogTitle sx={{ borderBottom: '1px solid', borderColor: 'divider', fontWeight: 600 }}>
-        {t('myProfile', language)}
+        {t('myProfile')}
       </DialogTitle>
       
       <DialogContent sx={{ mt: 2 }}>
@@ -392,7 +392,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
         {/* Банер профілю */}
         <Box sx={{ mb: 2 }}>
           <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-            {t('profileBanner', language)}
+            {t('profileBanner')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
             <TextField
@@ -436,7 +436,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
         {/* Рамка аватару */}
         <Box sx={{ mb: 2 }}>
           <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-            {t('profileFrame', language)}
+            {t('profileFrame')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             {[
@@ -530,7 +530,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
         {/* Ім'я */}
         <TextField
           fullWidth
-          label={t('displayNameLabel', language)}
+          label={t('displayNameLabel')}
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           size="small"
@@ -547,18 +547,18 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
         {/* Username */}
         <TextField
           fullWidth
-          label={t('usernameLabel', language)}
+          label={t('usernameLabel')}
           value={username}
           onChange={handleUsernameChange}
           size="small"
           sx={{ mb: 2 }}
           error={!!usernameError}
-          helperText={usernameError || t('usernameHint', language)}
+          helperText={usernameError || t('usernameHint')}
         />
 
         <TextField
           fullWidth
-          label={t('emailLabel', language)}
+          label={t('emailLabel')}
           value={currentUser?.email || ''}
           disabled
           size="small"
@@ -567,13 +567,13 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
 
         <Box sx={{ mb: 2 }}>
           <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-            {t('birthdayLabel', language)}
+            {t('birthdayLabel')}
           </Typography>
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 1 }}>
             <TextField
               select
               size="small"
-              label={t('birthdayMonth', language)}
+              label={t('birthdayMonth')}
               value={birthMonth}
               onChange={(e) => setBirthMonth(e.target.value)}
             >
@@ -588,7 +588,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
             <TextField
               select
               size="small"
-              label={t('birthdayDay', language)}
+              label={t('birthdayDay')}
               value={birthDay}
               onChange={(e) => setBirthDay(e.target.value)}
             >
@@ -601,7 +601,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
             <TextField
               select
               size="small"
-              label={t('birthdayYearOptional', language)}
+              label={t('birthdayYearOptional')}
               value={birthYear}
               onChange={(e) => setBirthYear(e.target.value)}
             >
@@ -622,7 +622,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
 
         {/* Статус */}
         <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-          {t('statusLabel', language)}
+          {t('statusLabel')}
         </Typography>
         <TextField
           fullWidth
@@ -643,7 +643,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
                     bgcolor: option.color,
                   }}
                 />
-                {t(option.labelKey, language)}
+                {t(option.labelKey)}
               </Box>
             </MenuItem>
           ))}
@@ -652,10 +652,10 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
         {/* Власний статус */}
         <TextField
           fullWidth
-          label={t('customStatusLabel', language)}
+          label={t('customStatusLabel')}
           value={customStatus}
           onChange={(e) => setCustomStatus(e.target.value)}
-          placeholder={t('customStatusPlaceholder', language)}
+          placeholder={t('customStatusPlaceholder')}
           size="small"
           sx={{ mb: 2 }}
         />
@@ -665,19 +665,19 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
         {/* Біо */}
         <TextField
           fullWidth
-          label={t('aboutMe', language)}
+          label={t('aboutMe')}
           value={bio}
           onChange={(e) => setBio(e.target.value)}
           multiline
           rows={3}
-          placeholder={t('aboutMePlaceholder', language)}
+          placeholder={t('aboutMePlaceholder')}
           size="small"
         />
       </DialogContent>
 
       <DialogActions sx={{ borderTop: '1px solid', borderColor: 'divider', px: 3, py: 2 }}>
         <Button onClick={onClose} variant="outlined" disabled={isSaving}>
-          {t('cancel', language)}
+          {t('cancel')}
         </Button>
         <Button 
           onClick={handleSave} 
@@ -686,7 +686,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
           disabled={isSaving}
           startIcon={isSaving ? <CircularProgress size={20} /> : undefined}
         >
-          {isSaving ? t('saving', language) : t('save', language)}
+          {isSaving ? t('saving') : t('save')}
         </Button>
       </DialogActions>
     </Dialog>
