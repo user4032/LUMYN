@@ -1,0 +1,60 @@
+appId: com.lumyn.messenger
+productName: LUMYN Messenger
+directories:
+  buildResources: assets
+  output: release
+files:
+  - from: dist/main
+    to: app/main
+  - from: dist/preload
+    to: app/preload
+  - from: dist/renderer
+    to: app/renderer
+  - package.json
+
+extraMetadata:
+  main: app/main/index.js
+
+# Windows Configuration
+win:
+  target:
+    - nsis
+    - portable
+  certificateFile: null
+  artifactName: LUMYN-Messenger-${version}.${ext}
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: LUMYN Messenger
+
+# macOS Configuration
+mac:
+  target:
+    - dmg
+    - zip
+  certificateFile: null
+  category: public.app-category.productivity
+
+dmg:
+  contents:
+    - x: 130
+      y: 220
+      type: file
+    - x: 438
+      y: 220
+      type: link
+      path: /Applications
+
+# Linux Configuration
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Office
+
+deb:
+  depends:
+    - libappindicator1
