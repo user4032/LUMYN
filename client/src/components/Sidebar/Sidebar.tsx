@@ -261,6 +261,16 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
                   ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
                   : theme.palette.text.primary,
               },
+              '& svg': {
+                color: currentView === 'chats' 
+                  ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
+                  : theme.palette.text.secondary,
+              },
+              '&:hover svg': {
+                color: currentView === 'chats' 
+                  ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
+                  : theme.palette.text.primary,
+              },
             })}
           >
             <BrutalChatIcon />
@@ -310,6 +320,16 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
                 bgcolor: currentView === 'servers' || serversExpanded 
                   ? (theme.palette.mode === 'dark' ? '#E5E5E5' : theme.palette.primary.dark)
                   : theme.palette.action.hover,
+                color: currentView === 'servers' || serversExpanded 
+                  ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
+                  : theme.palette.text.primary,
+              },
+              '& svg': {
+                color: currentView === 'servers' || serversExpanded 
+                  ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
+                  : theme.palette.text.secondary,
+              },
+              '&:hover svg': {
                 color: currentView === 'servers' || serversExpanded 
                   ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
                   : theme.palette.text.primary,
