@@ -16,6 +16,8 @@ import {
   InputLabel,
   Slider,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { keyframes } from '@mui/system';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
 import { setTheme, setLanguage } from '@store/slices/uiSlice';
@@ -29,6 +31,110 @@ interface SettingsDialogProps {
   open: boolean;
   onClose: () => void;
 }
+
+const dialogPop = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+`;
+
+const dialogFade = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const sheenShift = keyframes`
+  0% {
+    transform: translateX(-120%);
+  }
+  50% {
+    transform: translateX(120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+`;
+
+const StyledSwitch = styled(Switch)(({ theme }) => ({
+  width: 46,
+  height: 26,
+  padding: 0,
+  '& .MuiSwitch-switchBase': {
+    padding: 2,
+    transition: 'transform 0.2s ease',
+    '&.Mui-checked': {
+      transform: 'translateX(20px)',
+      color: '#fff',
+      '& + .MuiSwitch-track': {
+        backgroundColor: theme.palette.mode === 'dark' ? '#3b82f6' : '#2563eb',
+        opacity: 1,
+      },
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    width: 22,
+    height: 22,
+    borderRadius: 12,
+    backgroundColor: theme.palette.mode === 'dark' ? '#e2e8f0' : '#ffffff',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 13,
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(148,163,184,0.4)' : 'rgba(100,116,139,0.35)',
+    opacity: 1,
+    transition: 'background-color 0.2s ease',
+  },
+}));
+
+const sectionBaseSx = (theme: any) => ({
+  mb: 3,
+  p: 2.5,
+  borderRadius: 4,
+  border: '1px solid',
+  borderColor: 'divider',
+  background:
+    theme.palette.mode === 'dark'
+      ? 'linear-gradient(180deg, rgba(15,23,42,0.7) 0%, rgba(15,23,42,0.35) 100%)'
+      : 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.85) 100%)',
+  boxShadow:
+    theme.palette.mode === 'dark'
+      ? '0 12px 30px rgba(0,0,0,0.25)'
+      : '0 12px 30px rgba(15,23,42,0.08)',
+  position: 'relative',
+  overflow: 'hidden',
+  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-2px)',
+    boxShadow:
+      theme.palette.mode === 'dark'
+        ? '0 16px 40px rgba(0,0,0,0.35)'
+        : '0 16px 40px rgba(15,23,42,0.12)',
+  },
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    inset: 0,
+    background: 'linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.16) 50%, transparent 100%)',
+    transform: 'translateX(-120%)',
+    animation: `${sheenShift} 8s ease-in-out infinite`,
+    opacity: theme.palette.mode === 'dark' ? 0.08 : 0.2,
+  },
+  '& > *': {
+    position: 'relative',
+    zIndex: 1,
+  },
+});
 
 const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
   const dispatch = useDispatch();
@@ -176,23 +282,40 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
         sx: {
           bgcolor: 'background.paper',
           borderRadius: 6,
+          background: (theme) =>
+            theme.palette.mode === 'dark'
+              ? 'linear-gradient(160deg, rgba(15,23,42,0.95) 0%, rgba(17,24,39,0.9) 50%, rgba(15,23,42,0.95) 100%)'
+              : 'linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(241,245,249,0.9) 100%)',
+          border: '1px solid',
+          borderColor: 'divider',
+          animation: `${dialogPop} 0.35s ease`,
         },
       }}
     >
-      <DialogTitle sx={{ borderBottom: '1px solid', borderColor: 'divider', fontWeight: 600 }}>
+      <DialogTitle
+        sx={(theme) => ({
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          fontWeight: 600,
+          background:
+            theme.palette.mode === 'dark'
+              ? 'linear-gradient(120deg, rgba(30,41,59,0.9), rgba(15,23,42,0.6))'
+              : 'linear-gradient(120deg, rgba(255,255,255,0.98), rgba(226,232,240,0.75))',
+        })}
+      >
         {t('settings')}
       </DialogTitle>
       
-      <DialogContent sx={{ mt: 2 }}>
+      <DialogContent sx={{ mt: 2, animation: `${dialogFade} 0.35s ease` }}>
         {/* Налаштування інтерфейсу */}
-        <Box sx={{ mb: 3 }}>
+        <Box sx={sectionBaseSx}>
           <Typography variant="h6" sx={{ mb: 2 }}>
             {t('interface')}
           </Typography>
           
           <FormControlLabel
             control={
-              <Switch 
+              <StyledSwitch 
                 checked={isDarkTheme}
                 onChange={(e) => {
                   setIsDarkTheme(e.target.checked);
@@ -205,7 +328,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
           
           <FormControlLabel
             control={
-              <Switch 
+              <StyledSwitch 
                 checked={compactMode}
                 onChange={(e) => setCompactMode(e.target.checked)}
               />
@@ -215,7 +338,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
           
           <FormControlLabel
             control={
-              <Switch 
+              <StyledSwitch 
                 checked={animations}
                 onChange={(e) => setAnimations(e.target.checked)}
               />
@@ -301,7 +424,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
         <Divider sx={{ my: 2 }} />
 
         {/* Налаштування часу та мови */}
-        <Box sx={{ mb: 3 }}>
+        <Box sx={sectionBaseSx}>
           <Typography variant="h6" sx={{ mb: 2 }}>
             {t('time-language')}
           </Typography>
@@ -320,7 +443,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
 
           <FormControlLabel
             control={
-              <Switch 
+              <StyledSwitch 
                 checked={showSeconds}
                 onChange={(e) => setShowSeconds(e.target.checked)}
               />
@@ -344,14 +467,14 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
         <Divider sx={{ my: 2 }} />
 
         {/* Налаштування сповіщень */}
-        <Box sx={{ mb: 3 }}>
+        <Box sx={sectionBaseSx}>
           <Typography variant="h6" sx={{ mb: 2 }}>
             {t('notifications')}
           </Typography>
           
           <FormControlLabel
             control={
-              <Switch 
+              <StyledSwitch 
                 checked={soundEnabled}
                 onChange={(e) => setSoundEnabled(e.target.checked)}
               />
@@ -361,7 +484,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
           
           <FormControlLabel
             control={
-              <Switch 
+              <StyledSwitch 
                 checked={desktopNotifications}
                 onChange={(e) => setDesktopNotifications(e.target.checked)}
               />
@@ -370,7 +493,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
           />
           
           <FormControlLabel
-            control={<Switch />}
+            control={<StyledSwitch />}
             label={t('messagePreview')}
           />
         </Box>
@@ -378,7 +501,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
         <Divider sx={{ my: 2 }} />
 
         {/* Про додаток */}
-        <Box>
+        <Box sx={(theme) => ({ ...sectionBaseSx(theme), mb: 0 })}>
           <Typography variant="h6" sx={{ mb: 2 }}>
             {t('about')}
           </Typography>
