@@ -99,7 +99,7 @@ const ServerRolesDialog: React.FC<ServerRolesDialogProps> = ({ open, onClose, se
     if (server && open) {
       // Завантажуємо ролі з сервера або використовуємо дефолтні
       const serverRoles = server.roles || DEFAULT_ROLES;
-      setRoles(serverRoles.map(r => ({
+      setRoles(serverRoles.map((r: any) => ({
         id: r.roleId || r.id,
         name: r.name,
         color: r.color || '#99AAB5',
