@@ -407,7 +407,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
               onClick={() => bannerInputRef.current?.click()}
               sx={{ mt: 0.5 }}
             >
-              {language === 'en' ? 'Upload' : 'Завантажити'}
+              {t('uploadButton')}
             </Button>
           </Box>
           <input
@@ -442,42 +442,42 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
             {[
               {
                 id: 'default',
-                label: language === 'uk' ? 'Класика' : 'Classic',
+                labelKey: 'frameClassic',
                 bg: 'linear-gradient(180deg, #5865F2 0%, #5865F2 100%)',
                 glow: '0 0 10px rgba(88,101,242,0.5)',
                 border: '2px solid #5865F2',
               },
               {
                 id: 'neon',
-                label: language === 'uk' ? 'Неон' : 'Neon',
+                labelKey: 'frameNeon',
                 bg: 'conic-gradient(from 120deg, #00f5ff, #7c4dff, #00f5ff)',
                 glow: '0 0 12px rgba(124,77,255,0.6)',
                 border: '2px solid #7c4dff',
               },
               {
                 id: 'aurora',
-                label: language === 'uk' ? 'Аврора' : 'Aurora',
+                labelKey: 'frameAurora',
                 bg: 'radial-gradient(circle at 25% 25%, rgba(87,242,135,0.9), transparent 45%), radial-gradient(circle at 75% 75%, rgba(88,101,242,0.9), transparent 45%), conic-gradient(#1f2937, #111827)',
                 glow: '0 0 14px rgba(87,242,135,0.45)',
                 border: '2px solid rgba(88,101,242,0.9)',
               },
               {
                 id: 'ember',
-                label: language === 'uk' ? 'Іскра' : 'Ember',
+                labelKey: 'frameEmber',
                 bg: 'conic-gradient(#f9a826, #ed4245, #f9a826)',
                 glow: '0 0 12px rgba(249,168,38,0.5)',
                 border: '2px solid #ed4245',
               },
               {
                 id: 'cobalt',
-                label: language === 'uk' ? 'Кобальт' : 'Cobalt',
+                labelKey: 'frameCobalt',
                 bg: 'repeating-conic-gradient(#22d3ee 0 12deg, #3b82f6 12deg 24deg)',
                 glow: '0 0 12px rgba(34,211,238,0.45)',
                 border: '2px solid #22d3ee',
               },
               {
                 id: 'glitch',
-                label: language === 'uk' ? 'Глітч' : 'Glitch',
+                labelKey: 'frameGlitch',
                 bg: 'linear-gradient(135deg, #eb459e 0%, #5865F2 50%, #57F287 100%)',
                 glow: '0 0 12px rgba(235,69,158,0.45)',
                 border: '2px solid #eb459e',
@@ -510,7 +510,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
                     mask: 'radial-gradient(farthest-side, transparent calc(50% - 4px), #000 calc(50% - 3px))',
                   }}
                 />
-                <Typography variant="caption">{frame.label}</Typography>
+                <Typography variant="caption">{t(frame.labelKey)}</Typography>
               </Button>
             ))}
           </Box>
@@ -523,7 +523,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
             size="small"
             onClick={() => setAvatarPickerOpen(true)}
           >
-            {language === 'en' ? 'Choose from Gallery' : 'Вибрати зі стандартних'}
+            {t('chooseFromGallery')}
           </Button>
         </Box>
 
@@ -577,13 +577,15 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
               value={birthMonth}
               onChange={(e) => setBirthMonth(e.target.value)}
             >
-              {Array.from({ length: 12 }).map((_, idx) => (
-                <MenuItem key={idx + 1} value={String(idx + 1)}>
-                  {language === 'uk'
-                    ? ['січ', 'лют', 'бер', 'кві', 'тра', 'чер', 'лип', 'сер', 'вер', 'жов', 'лис', 'гру'][idx]
-                    : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][idx]}
-                </MenuItem>
-              ))}
+              {Array.from({ length: 12 }).map((_, idx) => {
+                const monthKeys = ['monthJan', 'monthFeb', 'monthMar', 'monthApr', 'monthMay', 'monthJun', 
+                                   'monthJul', 'monthAug', 'monthSep', 'monthOct', 'monthNov', 'monthDec'];
+                return (
+                  <MenuItem key={idx + 1} value={String(idx + 1)}>
+                    {t(monthKeys[idx])}
+                  </MenuItem>
+                );
+              })}
             </TextField>
             <TextField
               select
@@ -605,7 +607,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
               value={birthYear}
               onChange={(e) => setBirthYear(e.target.value)}
             >
-              <MenuItem value="">{language === 'uk' ? 'Не вказувати' : 'Not set'}</MenuItem>
+              <MenuItem value="">{t('birthMonthNotSet')}</MenuItem>
               {Array.from({ length: 100 }).map((_, idx) => {
                 const year = String(new Date().getFullYear() - idx);
                 return (

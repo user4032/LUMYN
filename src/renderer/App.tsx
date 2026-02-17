@@ -310,6 +310,19 @@ const App: React.FC = () => {
     }
   }, [isAuthenticated, currentUser, chats]);
 
+  // Join/leave chat rooms via Socket.IO
+  useEffect(() => {
+    if (selectedChat && socketService.getSocket()?.connected) {
+      console.log('[Socket.IO] Joining chat room:', selectedChat);
+      socketService.getSocket()?.emit('chat:join', { chatId: selectedChat });
+
+      return () => {
+        console.log('[Socket.IO] Leaving chat room:', selectedChat);
+        socketService.getSocket()?.emit('chat:leave', { chatId: selectedChat });
+      };
+    }
+  }, [selectedChat]);
+
   // При зміні view скидаємо вибір
   const handleViewChange = (view: 'chats' | 'servers' | 'threads') => {
     setCurrentView(view);

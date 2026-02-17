@@ -30,7 +30,6 @@ interface AuthScreenProps {
 type Mode = 'login' | 'register' | 'verify';
 
 const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
-  const language = useSelector((state: RootState) => state.ui.language);
   const [mode, setMode] = React.useState<Mode>('login');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -392,7 +391,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                 LUMYN
               </Typography>
               <Typography variant="body2" sx={{ color: '#cbd5f5', zIndex: 1, textAlign: 'center' }}>
-                {language === 'en' ? 'Next-gen messenger' : 'Месенджер нового покоління'}
+                {t('nextGenMessenger')}
               </Typography>
             </Box>
           )}

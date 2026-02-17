@@ -3,6 +3,7 @@ import { Box, Typography, LinearProgress } from '@mui/material';
 import { keyframes } from '@mui/system';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
+import { t } from '@i18n/index';
 import appLogo from '../../assets/app-logo-preview.png';
 
 const fadeIn = keyframes`
@@ -24,7 +25,6 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   const [progress, setProgress] = useState(0);
   const [customLogo, setCustomLogo] = useState<string | null>(null);
   const [appVersion, setAppVersion] = useState('0.1.5');
-  const language = useSelector((state: RootState) => state.ui.language);
 
   useEffect(() => {
     // Завантажуємо користувацьке лого
@@ -144,7 +144,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
               fontWeight: 500,
             }}
           >
-            {language === 'en' ? 'Next-gen messenger' : 'Месенджер нового покоління'}
+            {t('nextGenMessenger')}
           </Typography>
         </Box>
 
@@ -172,10 +172,10 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
               color: 'text.secondary',
             }}
           >
-            {progress < 30 && (language === 'en' ? 'Loading resources...' : 'Завантаження ресурсів...')}
-            {progress >= 30 && progress < 60 && (language === 'en' ? 'Preparing interface...' : 'Підготовка інтерфейсу...')}
-            {progress >= 60 && progress < 90 && (language === 'en' ? 'Connecting to servers...' : 'Підключення до серверів...')}
-            {progress >= 90 && (language === 'en' ? 'Almost ready...' : 'Майже готово...')}
+            {progress < 30 && t('loadingResources')}
+            {progress >= 30 && progress < 60 && t('preparingInterface')}
+            {progress >= 60 && progress < 90 && t('connectingToServers')}
+            {progress >= 90 && t('almostReady')}
           </Typography>
         </Box>
 

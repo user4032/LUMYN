@@ -386,7 +386,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ open, onClose }) => {
             LUMYN v{appVersion}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {language === 'en' ? 'Next-gen messenger' : 'Месенджер нового покоління'}
+            {t('nextGenMessenger')}
           </Typography>
         </Box>
       </DialogContent>

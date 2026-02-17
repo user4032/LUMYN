@@ -542,19 +542,43 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
       attachments: attachments.length > 0 ? attachments : undefined,
     };
 
+    // Додаємо повідомлення до UI негайно
     dispatch(addMessage(newMessage));
     
-    // Send message to recipient via WebSocket
-    if (chat && chat.type === 'private' && currentUser) {
-      // Для отримувача chatId має бути ID відправника (поточного користувача)
-      const messageForRecipient = {
-        ...newMessage,
-        chatId: currentUser.id, // Отримувач побачить повідомлення у чаті з відправником
-        userId: currentUser.id,
-        userName: currentUser.displayName || currentUser.username,
-        userAvatar: currentUser.avatar,
-      };
-      socketService.sendMessage(chat.id, currentUser.id, messageForRecipient);
+    // Відправляємо повідомлення через REST API та WebSocket
+    if (chat && currentUser) {
+      try {
+        const token = localStorage.getItem('disgram_auth_token');
+        if (token) {
+          // Зберігаємо на сервері
+          const response = await fetch('http://localhost:4777/messages/send', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              chatId: activeId,
+              content: messageText,
+              attachments: attachments.length > 0 ? attachments : [],
+              replyTo: replyingTo?.id,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log('[API] Message saved:', data);
+            
+            // Socket.IO відправляє оновлення через message:receive в сервісу
+            // Це включено в messageService.sendMessage
+          } else {
+            console.error('[API] Failed to save message:', response.statusText);
+          }
+        }
+      } catch (error) {
+        console.error('[API] Error sending message:', error);
+        // Завдяки Socket.IO обробці на сервері, інший користувач все ще отримає повідомлення
+      }
     }
     
     setMessageText('');

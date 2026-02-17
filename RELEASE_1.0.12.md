@@ -1,7 +1,7 @@
-# LUMYN v1.0.12 - Auto-Update and Bug Fixes
+# LUMYN v1.0.12 - Automatic Updates and Bug Fixes
 
 ## Release Name
-LUMYN v1.0.12 - Auto-Update and Bug Fixes
+v1.0.12 - Automatic Updates and Bug Fixes
 
 ## Description
 

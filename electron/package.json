@@ -1,0 +1,21 @@
+{
+  "name": "lumyn-electron",
+  "version": "1.0.12",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "npm run build && electron .",
+    "build": "tsc",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "dependencies": {
+    "electron-log": "^5.1.1",
+    "electron-updater": "^6.1.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "electron": "^28.3.3",
+    "electron-builder": "^24.13.3",
+    "typescript": "^5.3.0"
+  }
+}

@@ -37,7 +37,6 @@ const DEFAULT_AVATARS = [
 ];
 
 const AvatarPickerDialog: React.FC<AvatarPickerDialogProps> = ({ open, onClose, onSelect }) => {
-  const language = useSelector((state: RootState) => state.ui.language);
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
 
   const handleSelect = () => {
@@ -58,7 +57,7 @@ const AvatarPickerDialog: React.FC<AvatarPickerDialogProps> = ({ open, onClose, 
       <DialogTitle>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h6">
-            {language === 'en' ? 'Choose Avatar' : 'Оберіть аватар'}
+            {t('chooseAvatar')}
           </Typography>
           <IconButton onClick={handleClose} size="small">
             <CloseIcon />
@@ -97,7 +96,7 @@ const AvatarPickerDialog: React.FC<AvatarPickerDialogProps> = ({ open, onClose, 
             variant="contained" 
             disabled={!selectedAvatar}
           >
-            {language === 'en' ? 'Select' : 'Обрати'}
+              {t('selectButton')}
           </Button>
         </Box>
       </DialogContent>
