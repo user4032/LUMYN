@@ -2,16 +2,28 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
-let mainWindow;
+type BrowserWindowType = import('electron').BrowserWindow;
+type UpdateInfo = import('electron-updater').UpdateInfo;
+type ProgressInfo = import('electron-updater').ProgressInfo;
+type UpdateCheckResult = import('electron-updater').UpdateCheckResult;
 
-function sendUpdateStatus(payload) {
+type UpdateStatusPayload = {
+  status: 'checking' | 'available' | 'not-available' | 'error' | 'downloading' | 'downloaded';
+  info?: UpdateInfo;
+  progress?: ProgressInfo;
+  message?: string;
+};
+
+let mainWindow: BrowserWindowType | null = null;
+
+function sendUpdateStatus(payload: UpdateStatusPayload) {
   if (mainWindow?.webContents) {
     mainWindow.webContents.send('update-status', payload);
   }
 }
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
+  const window = new BrowserWindow({
     width: 1200,
     height: 800,
     minWidth: 800,
@@ -29,19 +41,21 @@ function createWindow() {
     title: 'LUMYN',
   });
 
+  mainWindow = window;
+
   // Приховуємо меню повністю
-  mainWindow.setMenuBarVisibility(false);
+  window.setMenuBarVisibility(false);
 
   // В режимі розробки завантажуємо з Vite dev server
   if (process.env.NODE_ENV === 'development' || !app.isPackaged) {
-    mainWindow.loadURL('http://localhost:5173');
-    mainWindow.webContents.openDevTools();
+    window.loadURL('http://localhost:5173');
+    window.webContents.openDevTools();
   } else {
     // В production завантажуємо з dist
-    mainWindow.loadFile(path.join(__dirname, '../../dist/renderer/index.html'));
+    window.loadFile(path.join(__dirname, '../../dist/renderer/index.html'));
   }
 
-  mainWindow.on('closed', () => {
+  window.on('closed', () => {
     mainWindow = null;
   });
 }
@@ -63,27 +77,27 @@ app.whenReady().then(() => {
     sendUpdateStatus({ status: 'checking' });
   });
   
-  autoUpdater.on('update-available', (info) => {
+  autoUpdater.on('update-available', (info: UpdateInfo) => {
     console.log('Update available:', info.version);
     sendUpdateStatus({ status: 'available', info });
   });
   
-  autoUpdater.on('update-not-available', (info) => {
+  autoUpdater.on('update-not-available', (info: UpdateInfo) => {
     console.log('No updates available');
     sendUpdateStatus({ status: 'not-available', info });
   });
   
-  autoUpdater.on('error', (err) => {
+  autoUpdater.on('error', (err: Error) => {
     console.error('Update error:', err);
     sendUpdateStatus({ status: 'error', message: err?.message || 'Update error' });
   });
   
-  autoUpdater.on('download-progress', (progress) => {
+  autoUpdater.on('download-progress', (progress: ProgressInfo) => {
     console.log(`Download progress: ${Math.round(progress.percent)}%`);
     sendUpdateStatus({ status: 'downloading', progress });
   });
   
-  autoUpdater.on('update-downloaded', (info) => {
+  autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
     console.log('Update downloaded:', info.version);
     sendUpdateStatus({ status: 'downloaded' });
   });
@@ -91,7 +105,7 @@ app.whenReady().then(() => {
   // Auto-check for updates on startup (after 3 seconds)
   setTimeout(() => {
     console.log('Checking for updates on startup...');
-    autoUpdater.checkForUpdates().catch(err => {
+    autoUpdater.checkForUpdates().catch((err: Error) => {
       console.error('Failed to check for updates:', err);
     });
   }, 3000);
@@ -130,7 +144,7 @@ ipcMain.handle('close-window', () => {
   mainWindow?.close();
 });
 
-ipcMain.handle('check-for-updates', async () => {
+ipcMain.handle('check-for-updates', async (): Promise<UpdateCheckResult | null> => {
   return autoUpdater.checkForUpdates();
 });
 
@@ -141,3 +155,5 @@ ipcMain.handle('download-update', async () => {
 ipcMain.handle('install-update', () => {
   autoUpdater.quitAndInstall();
 });
+
+export {};

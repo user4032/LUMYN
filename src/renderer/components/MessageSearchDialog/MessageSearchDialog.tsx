@@ -90,7 +90,13 @@ const MessageSearchDialog: React.FC<MessageSearchDialogProps> = ({
     >
       <DialogTitle sx={{ pb: 1 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">🔍 {t('searchMessages')}</Typography>
+          <Typography
+            variant="h6"
+            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+          >
+            <SearchIcon fontSize="small" />
+            <span>{t('searchMessages')}</span>
+          </Typography>
           <IconButton size="small" onClick={onClose}>
             <CloseIcon />
           </IconButton>

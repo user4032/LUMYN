@@ -115,7 +115,17 @@ export const joinServer = async (token: string, code: string) => {
   };
 };
 
-export const updateServer = async (token: string, serverId: string, data: { name?: string; description?: string; icon?: string; banner?: string }) => {
+export const updateServer = async (
+  token: string,
+  serverId: string,
+  data: {
+    name?: string;
+    description?: string;
+    icon?: string;
+    banner?: string;
+    inviteCode?: string;
+  }
+) => {
   const response = await fetch(`${API_BASE}/servers/${serverId}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },

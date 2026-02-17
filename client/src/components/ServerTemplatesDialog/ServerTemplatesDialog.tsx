@@ -23,6 +23,8 @@ import {
   MusicNote as MusicIcon,
   Movie as MediaIcon,
   Science as ScienceIcon,
+  TextSnippet as TextChannelIcon,
+  VolumeUp as VoiceChannelIcon,
 } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
@@ -299,9 +301,22 @@ const ServerTemplatesDialog: React.FC<ServerTemplatesDialogProps> = ({ open, onC
                     gap: 1,
                   }}
                 >
-                  <Typography sx={{ fontSize: 16 }}>
-                    {channel.type === 'text' ? '📝' : '🔊'}
-                  </Typography>
+                  <Box
+                    sx={{
+                      width: 20,
+                      height: 20,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: channel.type === 'text' ? 'primary.main' : 'success.main',
+                    }}
+                  >
+                    {channel.type === 'text' ? (
+                      <TextChannelIcon fontSize="small" />
+                    ) : (
+                      <VoiceChannelIcon fontSize="small" />
+                    )}
+                  </Box>
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="body2" fontWeight={600}>
                       {channel.name}

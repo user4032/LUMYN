@@ -14,6 +14,7 @@ import {
   VolumeUp as VoiceIcon,
   Group as MembersIcon,
   EmojiEvents as TrophyIcon,
+  Celebration as CelebrationIcon,
 } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
@@ -75,8 +76,14 @@ const ServerWelcomeDialog: React.FC<ServerWelcomeDialogProps> = ({ open, onClose
           {server.icon || server.name[0]?.toUpperCase()}
         </Avatar>
         
-        <Typography variant="h4" fontWeight={700} mb={1}>
-          {t('welcomeTo')} {server.name}! 🎉
+        <Typography
+          variant="h4"
+          fontWeight={700}
+          mb={1}
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}
+        >
+          <CelebrationIcon sx={{ fontSize: 28 }} />
+          <span>{t('welcomeTo')} {server.name}!</span>
         </Typography>
         
         {server.description && (

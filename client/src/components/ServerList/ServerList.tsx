@@ -49,6 +49,22 @@ const ServerList: React.FC<ServerListProps> = ({ onSelectServer, selectedServer 
   const [serverSettingsOpen, setServerSettingsOpen] = React.useState(false);
 
   const currentServer = servers.find((s) => s.id === activeServer);
+  const getBannerStyles = (banner: string) => {
+    const trimmed = String(banner || '').trim();
+    if (!trimmed) return {};
+    if (trimmed.includes('gradient(')) {
+      return {
+        background: trimmed,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      };
+    }
+    return {
+      backgroundImage: `url(${trimmed})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    };
+  };
 
   // Автоматично вибираємо перший сервер при завантаженні
   React.useEffect(() => {
@@ -287,9 +303,7 @@ const ServerList: React.FC<ServerListProps> = ({ onSelectServer, selectedServer 
         <Box
           sx={{
             height: 120,
-            backgroundImage: `url(${currentServer.banner})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            ...getBannerStyles(currentServer.banner),
             position: 'relative',
             '&::after': {
               content: '""',

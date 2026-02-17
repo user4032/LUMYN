@@ -22,6 +22,7 @@ import {
   Star as StarIcon,
   Celebration as CelebrationIcon,
   LocalFireDepartment as FireIcon,
+  RocketLaunch as RocketIcon,
 } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
@@ -181,8 +182,14 @@ const ServerInfoDialog: React.FC<ServerInfoDialogProps> = ({ open, onClose, serv
 
           {/* Server Boost Progress */}
           <Grid item xs={12}>
-            <Typography variant="h6" fontWeight={600} mb={2}>
-              {t('serverBoost')} 🚀
+            <Typography
+              variant="h6"
+              fontWeight={600}
+              mb={2}
+              sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+            >
+              <RocketIcon fontSize="small" />
+              <span>{t('serverBoost')}</span>
             </Typography>
             <Box sx={{ mb: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>

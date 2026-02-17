@@ -26,6 +26,8 @@ import {
   ExitToApp as LeaveIcon,
   PhotoCamera as CameraIcon,
   EmojiEvents as AdminIcon,
+  TextSnippet as TextChannelIcon,
+  VolumeUp as VoiceChannelIcon,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
@@ -77,6 +79,24 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
     state.servers.servers.find(s => s.id === serverId)
   );
   const language = useSelector((state: RootState) => state.ui.language);
+  const sanitizeInviteCode = (value: string) =>
+    String(value).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
+  const getBannerPreviewStyles = (banner: string) => {
+    const trimmed = String(banner || '').trim();
+    if (!trimmed) return {};
+    if (trimmed.includes('gradient(')) {
+      return {
+        background: trimmed,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      };
+    }
+    return {
+      backgroundImage: `url(${trimmed})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    };
+  };
 
   React.useEffect(() => {
     if (server && open) {
@@ -113,6 +133,35 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
     } catch (error) {
       console.error('Failed to update server:', error);
       alert(t('serverUpdateFailed'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveInviteCode = async () => {
+    if (!currentUser.token || !isOwner) return;
+
+    const normalizedInviteCode = sanitizeInviteCode(customInviteCode);
+    if (normalizedInviteCode.length < 4) {
+      alert(t('inviteCodeTooShort') || 'Invite code must be at least 4 characters');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await updateServer(currentUser.token, serverId, {
+        inviteCode: normalizedInviteCode,
+      });
+
+      if (response.ok && response.server) {
+        dispatch(updateServerRedux(response.server));
+        setCustomInviteCode(response.server.inviteCode || normalizedInviteCode);
+        setEditingCode(false);
+        alert(t('inviteCodeUpdated') || 'Invite code updated');
+      }
+    } catch (error) {
+      console.error('Failed to update invite code:', error);
+      alert(t('inviteCodeUpdateFailed') || 'Failed to update invite code');
     } finally {
       setLoading(false);
     }
@@ -365,9 +414,7 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
                     mt: 2,
                     height: 100,
                     borderRadius: 1,
-                    backgroundImage: `url(${serverBanner})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
+                    ...getBannerPreviewStyles(serverBanner),
                     border: '1px solid',
                     borderColor: 'divider',
                   }}
@@ -386,7 +433,7 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
                   InputProps={{ readOnly: !editingCode }}
                   size="small"
                   onChange={(e) => {
-                    const val = String(e.target.value).toUpperCase().slice(0, 10);
+                    const val = sanitizeInviteCode(e.target.value);
                     setCustomInviteCode(val);
                   }}
                   disabled={!editingCode && !isOwner}
@@ -411,9 +458,16 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
                 </Button>
                 {isOwner && (
                   <Button
-                    onClick={() => setEditingCode(!editingCode)}
+                    onClick={() => {
+                      if (editingCode) {
+                        handleSaveInviteCode();
+                      } else {
+                        setEditingCode(true);
+                      }
+                    }}
                     variant="outlined"
                     size="small"
+                    disabled={loading}
                   >
                     {editingCode ? t('save') : t('edit')}
                   </Button>
@@ -449,8 +503,11 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
               <Button
                 variant="outlined"
                 onClick={() => setChannelType(channelType === 'text' ? 'voice' : 'text')}
+                startIcon={
+                  channelType === 'text' ? <TextChannelIcon /> : <VoiceChannelIcon />
+                }
               >
-                {channelType === 'text' ? '📝 Text' : '🔊 Voice'}
+                {channelType === 'text' ? 'Text' : 'Voice'}
               </Button>
               <IconButton
                 color="primary"
@@ -467,7 +524,19 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
                   <ListItemText
                     primary={
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <span>{channel.type === 'text' ? '📝' : '🔊'}</span>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: channel.type === 'text' ? 'primary.main' : 'success.main',
+                          }}
+                        >
+                          {channel.type === 'text' ? (
+                            <TextChannelIcon fontSize="small" />
+                          ) : (
+                            <VoiceChannelIcon fontSize="small" />
+                          )}
+                        </Box>
                         <span>{channel.name}</span>
                       </Box>
                     }

@@ -123,6 +123,22 @@ const updateServer = async (userId, serverId, updates) => {
   if (updates.description !== undefined) server.description = String(updates.description).trim();
   if (updates.icon !== undefined) server.icon = updates.icon;
   if (updates.banner !== undefined) server.banner = updates.banner;
+  if (updates.inviteCode !== undefined) {
+    const normalizedInviteCode = String(updates.inviteCode).trim().toUpperCase();
+    if (!/^[A-Z0-9]{4,10}$/.test(normalizedInviteCode)) {
+      throw new Error('Invalid invite code');
+    }
+
+    const existing = await Server.findOne({
+      inviteCode: normalizedInviteCode,
+      _id: { $ne: server._id },
+    });
+    if (existing) {
+      throw new Error('Invite code already in use');
+    }
+
+    server.inviteCode = normalizedInviteCode;
+  }
 
   await server.save();
   return server.toObject();

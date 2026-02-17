@@ -17,6 +17,7 @@ import {
 import {
   Close as CloseIcon,
   PushPin as UnpinIcon,
+  PushPinOutlined as PinIcon,
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { uk, enUS } from 'date-fns/locale';
@@ -96,7 +97,13 @@ const PinnedMessagesDialog: React.FC<PinnedMessagesDialogProps> = ({
     >
       <DialogTitle sx={{ pb: 1 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">📌 {t('pinnedMessages')}</Typography>
+          <Typography
+            variant="h6"
+            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+          >
+            <PinIcon fontSize="small" />
+            <span>{t('pinnedMessages')}</span>
+          </Typography>
           <IconButton size="small" onClick={onClose}>
             <CloseIcon />
           </IconButton>

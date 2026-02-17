@@ -28,6 +28,9 @@ import {
   Delete as DeleteIcon,
   PushPin as PinIcon,
   Search as SearchIcon,
+  ContentCopy as CopyIcon,
+  NotificationsActive as UnmuteIcon,
+  NotificationsOff as MuteIcon,
 } from '@mui/icons-material';
 import { RootState } from '@store/store';
 import { addMessage, deleteMessage, editMessage, togglePin, toggleMute, addChat } from '@store/slices/chatsSlice';
@@ -1723,7 +1726,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
           {t('pinMessage')}
         </MenuItem>
         <MenuItem onClick={handleCopyMessageLink}>
-          <IconButton size="small" sx={{ mr: -0.5 }}>📋</IconButton>
+          <CopyIcon sx={{ mr: 1 }} fontSize="small" />
           {t('copyMessageLink')}
         </MenuItem>
         {canEditMessage && (
@@ -1747,7 +1750,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
           {chat?.isPinned ? t('unpinChat') : t('pinChat')}
         </MenuItem>
         <MenuItem onClick={handleMuteChat}>
-          {chat?.isMuted ? '🔔' : '🔕'} {chat?.isMuted ? t('unmuteChat') : t('muteChat')}
+          {chat?.isMuted ? (
+            <UnmuteIcon sx={{ mr: 1 }} fontSize="small" />
+          ) : (
+            <MuteIcon sx={{ mr: 1 }} fontSize="small" />
+          )}
+          {chat?.isMuted ? t('unmuteChat') : t('muteChat')}
         </MenuItem>
         <MenuItem
           onClick={handleClearHistory}
