@@ -16,6 +16,7 @@
     "@mui/icons-material": "^5.15.0",
     "@mui/material": "^5.15.0",
     "@reduxjs/toolkit": "^2.2.0",
+    "@vercel/speed-insights": "^1.0.0",
     "axios": "^1.6.0",
     "date-fns": "^3.3.0",
     "emoji-picker-react": "^4.8.0",

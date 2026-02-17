@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { CssBaseline } from '@mui/material';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import App from './App';
 import { store } from './store/store';
 import './styles/global.css';
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       >
         <CssBaseline />
         <App />
+        <SpeedInsights />
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,
