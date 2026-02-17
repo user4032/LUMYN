@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { Language } from '@i18n/translations';
+import { setLanguage as setI18nLanguage } from '@i18n/index';
 
 interface UIState {
   theme: 'light' | 'dark';
@@ -29,6 +30,8 @@ const uiSlice = createSlice({
     },
     setLanguage: (state, action: PayloadAction<Language>) => {
       state.language = action.payload;
+      // Синхронізуємо з i18n модулем
+      setI18nLanguage(action.payload);
     },
     toggleSidebar: (state) => {
       state.sidebarCollapsed = !state.sidebarCollapsed;
