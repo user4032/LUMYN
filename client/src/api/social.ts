@@ -173,6 +173,61 @@ export const deleteChannel = async (token: string, serverId: string, channelId: 
   return handleJson(response) as Promise<{ ok: boolean }>;
 };
 
+// ===== ROLE API =====
+
+export const createRole = async (token: string, serverId: string, data: { name: string; color?: string; permissions?: string[] }) => {
+  const response = await fetch(`${API_BASE}/servers/${serverId}/roles`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+  const res = (await handleJson(response)) as ServerResponse;
+  return {
+    ...res,
+    server: res.server ? normalizeServer(res.server) : res.server,
+  };
+};
+
+export const updateRole = async (token: string, serverId: string, roleId: string, data: { name?: string; color?: string; permissions?: string[]; position?: number }) => {
+  const response = await fetch(`${API_BASE}/servers/${serverId}/roles/${roleId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+  const res = (await handleJson(response)) as ServerResponse;
+  return {
+    ...res,
+    server: res.server ? normalizeServer(res.server) : res.server,
+  };
+};
+
+export const deleteRole = async (token: string, serverId: string, roleId: string) => {
+  const response = await fetch(`${API_BASE}/servers/${serverId}/roles/${roleId}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const res = (await handleJson(response)) as ServerResponse;
+  return {
+    ...res,
+    server: res.server ? normalizeServer(res.server) : res.server,
+  };
+};
+
+export const assignRole = async (token: string, serverId: string, userId: string, roleId: string | null) => {
+  const response = await fetch(`${API_BASE}/servers/${serverId}/members/${userId}/role`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ roleId }),
+  });
+  const res = (await handleJson(response)) as ServerResponse;
+  return {
+    ...res,
+    server: res.server ? normalizeServer(res.server) : res.server,
+  };
+};
+
+// ===== MESSAGE REACTIONS =====
+
 export const addMessageReaction = async (token: string, messageId: string, emoji: string) => {
   const response = await fetch(`${API_BASE}/messages/${messageId}/reactions`, {
     method: 'POST',

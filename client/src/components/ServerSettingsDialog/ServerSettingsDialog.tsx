@@ -26,11 +26,13 @@ import {
   ExitToApp as LeaveIcon,
   PhotoCamera as CameraIcon,
   EmojiEvents as AdminIcon,
+  Check as CheckIcon,
+  Close as CloseIcon,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
 import { t } from '@i18n/index';
-import { updateServer, deleteServer, leaveServer, createChannel, deleteChannel } from '@/api/social';
+import { updateServer, deleteServer, leaveServer, createChannel, deleteChannel, updateChannel } from '@/api/social';
 import { updateServer as updateServerRedux, removeServer } from '@store/slices/serversSlice';
 import ServerRolesDialog from '../ServerRolesDialog/ServerRolesDialog';
 
@@ -64,11 +66,15 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
   const [serverIcon, setServerIcon] = useState('');
   const [newChannelName, setNewChannelName] = useState('');
   const [channelType, setChannelType] = useState<'text' | 'voice'>('text');
+  const [newChannelCategory, setNewChannelCategory] = useState('');
   const [loading, setLoading] = useState(false);
   const [rolesDialogOpen, setRolesDialogOpen] = useState(false);
   const [customInviteCode, setCustomInviteCode] = useState('');
   const [editingCode, setEditingCode] = useState(false);
   const [codeCopyMessage, setCodeCopyMessage] = useState('');
+  const [editingChannel, setEditingChannel] = useState<string | null>(null);
+  const [editChannelName, setEditChannelName] = useState('');
+  const [editChannelCategory, setEditChannelCategory] = useState('');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const bannerInputRef = React.useRef<HTMLInputElement>(null);
   
@@ -192,6 +198,7 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
       const response = await createChannel(currentUser.token, serverId, {
         name: newChannelName,
         type: channelType,
+        category: newChannelCategory || undefined,
       });
       
       if (response.ok && response.channel) {
@@ -202,6 +209,7 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
         };
         dispatch(updateServerRedux(updatedServer));
         setNewChannelName('');
+        setNewChannelCategory('');
         alert(t('channelCreated'));
       }
     } catch (error) {
@@ -210,6 +218,49 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditChannel = (channel: any) => {
+    setEditingChannel(channel.id);
+    setEditChannelName(channel.name);
+    setEditChannelCategory(channel.category || '');
+  };
+
+  const handleSaveChannelEdit = async (channelId: string) => {
+    if (!currentUser.token || !editChannelName.trim()) return;
+
+    setLoading(true);
+    try {
+      const response = await updateChannel(currentUser.token, serverId, channelId, {
+        name: editChannelName,
+        category: editChannelCategory || undefined,
+      });
+      
+      if (response.ok) {
+        const updatedServer = {
+          ...server,
+          channels: (server.channels || []).map(ch => 
+            ch.id === channelId 
+              ? { ...ch, name: editChannelName, category: editChannelCategory || null }
+              : ch
+          ),
+        };
+        dispatch(updateServerRedux(updatedServer));
+        setEditingChannel(null);
+        alert(t('channelUpdated'));
+      }
+    } catch (error) {
+      console.error('Failed to update channel:', error);
+      alert(t('channelUpdateFailed'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelChannelEdit = () => {
+    setEditingChannel(null);
+    setEditChannelName('');
+    setEditChannelCategory('');
   };
 
   const handleDeleteChannel = async (channelId: string) => {
@@ -438,13 +489,20 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="h6">{t('manageChannels')}</Typography>
             
-            <Box sx={{ display: 'flex', gap: 1 }}>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
               <TextField
                 placeholder={t('channelName')}
                 value={newChannelName}
                 onChange={(e) => setNewChannelName(e.target.value)}
                 size="small"
-                fullWidth
+                sx={{ flex: '1 1 200px' }}
+              />
+              <TextField
+                placeholder={t('category')}
+                value={newChannelCategory}
+                onChange={(e) => setNewChannelCategory(e.target.value)}
+                size="small"
+                sx={{ flex: '1 1 150px' }}
               />
               <Button
                 variant="outlined"
@@ -463,25 +521,94 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
 
             <List>
               {(server.channels || []).map((channel) => (
-                <ListItem key={channel.id}>
-                  <ListItemText
-                    primary={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <ListItem 
+                  key={channel.id}
+                  sx={{
+                    bgcolor: 'action.hover',
+                    borderRadius: 1,
+                    mb: 1,
+                  }}
+                >
+                  {editingChannel === channel.id ? (
+                    <>
+                      <Box sx={{ display: 'flex', gap: 1, flex: 1, alignItems: 'center' }}>
                         <span>{channel.type === 'text' ? '📝' : '🔊'}</span>
-                        <span>{channel.name}</span>
+                        <TextField
+                          value={editChannelName}
+                          onChange={(e) => setEditChannelName(e.target.value)}
+                          size="small"
+                          sx={{ flex: '1 1 200px' }}
+                        />
+                        <TextField
+                          value={editChannelCategory}
+                          onChange={(e) => setEditChannelCategory(e.target.value)}
+                          placeholder={t('category')}
+                          size="small"
+                          sx={{ flex: '1 1 150px' }}
+                        />
                       </Box>
-                    }
-                  />
-                  {isOwner && (
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        edge="end"
-                        onClick={() => handleDeleteChannel(channel.id)}
-                        disabled={loading}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          edge="end"
+                          onClick={() => handleSaveChannelEdit(channel.id)}
+                          disabled={loading || !editChannelName.trim()}
+                          color="primary"
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                        <IconButton
+                          edge="end"
+                          onClick={handleCancelChannelEdit}
+                          disabled={loading}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </>
+                  ) : (
+                    <>
+                      <ListItemText
+                        primary={
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <span>{channel.type === 'text' ? '📝' : '🔊'}</span>
+                            <span>{channel.name}</span>
+                            {channel.category && (
+                              <Typography 
+                                variant="caption" 
+                                sx={{ 
+                                  ml: 1, 
+                                  px: 1, 
+                                  py: 0.5, 
+                                  bgcolor: 'primary.main',
+                                  color: 'primary.contrastText',
+                                  borderRadius: 1,
+                                }}
+                              >
+                                {channel.category}
+                              </Typography>
+                            )}
+                          </Box>
+                        }
+                      />
+                      {isOwner && (
+                        <ListItemSecondaryAction>
+                          <IconButton
+                            edge="end"
+                            onClick={() => handleEditChannel(channel)}
+                            disabled={loading}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            edge="end"
+                            onClick={() => handleDeleteChannel(channel.id)}
+                            disabled={loading}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      )}
+                    </>
                   )}
                 </ListItem>
               ))}

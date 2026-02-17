@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -19,6 +19,9 @@ import {
   FormControlLabel,
   Checkbox,
   Alert,
+  Select,
+  MenuItem,
+  Avatar,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -27,9 +30,11 @@ import {
   ExpandMore as ExpandIcon,
   ColorLens as ColorIcon,
 } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@store/store';
 import { t } from '@i18n/index';
+import { createRole, updateRole, deleteRole, assignRole } from '@/api/social';
+import { updateServer as updateServerRedux } from '@store/slices/serversSlice';
 
 interface Role {
   id: string;
@@ -76,64 +81,151 @@ const DEFAULT_ROLES: Role[] = [
 ];
 
 const ServerRolesDialog: React.FC<ServerRolesDialogProps> = ({ open, onClose, serverId }) => {
+  const dispatch = useDispatch();
   const [roles, setRoles] = useState<Role[]>(DEFAULT_ROLES);
   const [newRoleName, setNewRoleName] = useState('');
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [expandedRole, setExpandedRole] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [memberRoleAssignments, setMemberRoleAssignments] = useState<Record<string, string>>({});
+  
   const language = useSelector((state: RootState) => state.ui.language);
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const server = useSelector((state: RootState) => 
+    state.servers.servers.find(s => s.id === serverId)
+  );
 
-  const handleCreateRole = () => {
-    if (!newRoleName.trim()) return;
-
-    const newRole: Role = {
-      id: `role_${Date.now()}`,
-      name: newRoleName,
-      color: COLORS[roles.length % COLORS.length],
-      permissions: ['send_messages'],
-      position: roles.length,
-    };
-
-    setRoles([...roles, newRole]);
-    setNewRoleName('');
-    setSelectedRole(newRole);
-    setExpandedRole(newRole.id);
-  };
-
-  const handleDeleteRole = (roleId: string) => {
-    if (roleId === 'everyone') return;
-    setRoles(roles.filter(r => r.id !== roleId));
-    if (selectedRole?.id === roleId) {
-      setSelectedRole(null);
-    }
-  };
-
-  const handleTogglePermission = (roleId: string, permissionId: string) => {
-    const updatedRoles = roles.map(role => {
-      if (role.id !== roleId) return role;
-
-      const hasPermission = role.permissions.includes(permissionId);
-      const newPermissions = hasPermission
-        ? role.permissions.filter(p => p !== permissionId)
-        : [...role.permissions, permissionId];
-
-      return { ...role, permissions: newPermissions };
-    });
-    
-    setRoles(updatedRoles);
-    
-    // Update selected role with new permissions
-    if (selectedRole?.id === roleId) {
-      const updatedSelectedRole = updatedRoles.find(r => r.id === roleId);
-      if (updatedSelectedRole) {
-        setSelectedRole(updatedSelectedRole);
+  useEffect(() => {
+    if (server && open) {
+      // Завантажуємо ролі з сервера або використовуємо дефолтні
+      const serverRoles = server.roles || DEFAULT_ROLES;
+      setRoles(serverRoles.map(r => ({
+        id: r.roleId || r.id,
+        name: r.name,
+        color: r.color || '#99AAB5',
+        permissions: r.permissions || [],
+        position: r.position || 0,
+      })));
+      
+      // Завантажуємо призначення ролей для членів
+      if (server.memberRoles) {
+        setMemberRoleAssignments(server.memberRoles);
       }
     }
+  }, [server, open]);
+
+  const handleCreateRole = async () => {
+    if (!newRoleName.trim() || !currentUser?.token) return;
+
+    setLoading(true);
+    try {
+      const response = await createRole(currentUser.token, serverId, {
+        name: newRoleName,
+        color: COLORS[roles.length % COLORS.length],
+        permissions: ['send_messages'],
+      });
+
+      if (response.ok && response.server) {
+        dispatch(updateServerRedux(response.server));
+        setNewRoleName('');
+        alert(t('roleCreated') || 'Role created!');
+      }
+    } catch (error) {
+      console.error('Failed to create role:', error);
+      alert(t('roleCreationFailed') || 'Failed to create role');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleChangeColor = (roleId: string, color: string) => {
-    setRoles(roles.map(role => 
-      role.id === roleId ? { ...role, color } : role
-    ));
+  const handleDeleteRole = async (roleId: string) => {
+    if (roleId === 'everyone' || !currentUser?.token) return;
+    
+    const confirmed = window.confirm(t('confirmDeleteRole') || 'Delete this role?');
+    if (!confirmed) return;
+
+    setLoading(true);
+    try {
+      const response = await deleteRole(currentUser.token, serverId, roleId);
+      if (response.ok && response.server) {
+        dispatch(updateServerRedux(response.server));
+        if (selectedRole?.id === roleId) {
+          setSelectedRole(null);
+        }
+        alert(t('roleDeleted') || 'Role deleted!');
+      }
+    } catch (error) {
+      console.error('Failed to delete role:', error);
+      alert(t('roleDeleteFailed') || 'Failed to delete role');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleTogglePermission = async (roleId: string, permissionId: string) => {
+    if (!currentUser?.token) return;
+    
+    const role = roles.find(r => r.id === roleId);
+    if (!role) return;
+
+    const hasPermission = role.permissions.includes(permissionId);
+    const newPermissions = hasPermission
+      ? role.permissions.filter(p => p !== permissionId)
+      : [...role.permissions, permissionId];
+
+    setLoading(true);
+    try {
+      const response = await updateRole(currentUser.token, serverId, roleId, {
+        permissions: newPermissions,
+      });
+      
+      if (response.ok && response.server) {
+        dispatch(updateServerRedux(response.server));
+      }
+    } catch (error) {
+      console.error('Failed to update role permissions:', error);
+      alert(t('roleUpdateFailed') || 'Failed to update role');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChangeColor = async (roleId: string, color: string) => {
+    if (!currentUser?.token) return;
+
+    setLoading(true);
+    try {
+      const response = await updateRole(currentUser.token, serverId, roleId, {
+        color,
+      });
+      
+      if (response.ok && response.server) {
+        dispatch(updateServerRedux(response.server));
+      }
+    } catch (error) {
+      console.error('Failed to update role color:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAssignRole = async (userId: string, roleId: string | null) => {
+    if (!currentUser?.token) return;
+
+    setLoading(true);
+    try {
+      const response = await assignRole(currentUser.token, serverId, userId, roleId);
+      
+      if (response.ok && response.server) {
+        dispatch(updateServerRedux(response.server));
+        alert(t('roleAssigned') || 'Role assigned!');
+      }
+    } catch (error) {
+      console.error('Failed to assign role:', error);
+      alert(t('roleAssignFailed') || 'Failed to assign role');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -327,6 +419,51 @@ const ServerRolesDialog: React.FC<ServerRolesDialogProps> = ({ open, onClose, se
                   </Box>
                 ))}
               </FormGroup>
+              
+              {/* Призначення ролей учасникам */}
+              {selectedRole.id !== 'everyone' && (
+                <Box sx={{ mt: 4 }}>
+                  <Typography variant="h6" fontWeight={600} mb={2}>
+                    {t('assignRoleToMembers') || 'Assign to Members'}
+                  </Typography>
+                  <List>
+                    {(server?.members || []).map((member: any) => {
+                      const memberId = String(member.userId || member.id || member._id);
+                      const memberName = member.displayName || member.username || memberId;
+                      const currentRoleId = memberRoleAssignments[memberId];
+                      const hasThisRole = currentRoleId === selectedRole.id;
+                      
+                      return (
+                        <ListItem 
+                          key={memberId}
+                          sx={{
+                            borderRadius: 1,
+                            mb: 1,
+                            border: '1px solid',
+                            borderColor: 'divider',
+                          }}
+                        >
+                          <Avatar sx={{ width: 32, height: 32, mr: 2 }}>
+                            {memberName[0]?.toUpperCase()}
+                          </Avatar>
+                          <ListItemText
+                            primary={memberName}
+                            secondary={hasThisRole ? selectedRole.name : (currentRoleId ? roles.find(r => r.id === currentRoleId)?.name : t('noRole'))}
+                          />
+                          <Button
+                            size="small"
+                            variant={hasThisRole ? 'outlined' : 'contained'}
+                            onClick={() => handleAssignRole(memberId, hasThisRole ? null : selectedRole.id)}
+                            disabled={loading}
+                          >
+                            {hasThisRole ? t('remove') : t('assign')}
+                          </Button>
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </Box>
+              )}
             </Box>
           ) : (
             <Box
@@ -348,10 +485,7 @@ const ServerRolesDialog: React.FC<ServerRolesDialogProps> = ({ open, onClose, se
       </DialogContent>
 
       <DialogActions sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider' }}>
-        <Button onClick={onClose}>{t('close')}</Button>
-        <Button variant="contained" onClick={onClose}>
-          {t('saveChanges')}
-        </Button>
+        <Button onClick={onClose} disabled={loading}>{t('close')}</Button>
       </DialogActions>
     </Dialog>
   );
