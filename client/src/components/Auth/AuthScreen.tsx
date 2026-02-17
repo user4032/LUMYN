@@ -54,26 +54,14 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
   const [password, setPassword] = React.useState('');
   const [displayName, setDisplayName] = React.useState('');
   const [username, setUsername] = React.useState('');
-  const [code, setCode] = React.useState('');
+  // Верифікаційний код більше не використовується
   const [error, setError] = React.useState('');
   const [info, setInfo] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
-  const [resendTimer, setResendTimer] = React.useState(0);
-  const showBrandPanel = mode !== 'verify';
-
-  const emailValid = /\S+@\S+\.\S+/.test(email.trim());
-  const nameValid = displayName.trim().length >= 5;
-  const usernameValid = username.trim().length >= 4 && /^[a-zA-Z0-9._-]+$/.test(username.trim());
-  const passwordStrong = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(password);
-
-  React.useEffect(() => {
-    if (resendTimer <= 0) return;
-    const timer = setInterval(() => {
-      setResendTimer((prev) => prev - 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [resendTimer]);
+  // resendTimer and setResendTimer removed
+  const showBrandPanel = true;
+  // resendTimer useEffect removed
 
   const resetAlerts = () => {
     setError('');
@@ -82,12 +70,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
 
   const handleLogin = async () => {
     resetAlerts();
-    if (!emailValid) {
-      setError(t('invalidEmail'));
-      return;
-    }
-    if (!passwordStrong) {
-      setError(t('passwordWeak'));
+    if (!email || !password) {
+      setError(t('fillAllFields'));
       return;
     }
     setLoading(true);
@@ -104,98 +88,9 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
     }
   };
 
-  const handleRegister = async () => {
-    resetAlerts();
-    if (!emailValid) {
-      setError(t('invalidEmail'));
-      return;
-    }
-    if (!nameValid) {
-      setError(t('nameMin'));
-      return;
-    }
-    if (!usernameValid) {
-      setError(t('usernameInvalidChars'));
-      return;
-    }
-    if (!passwordStrong) {
-      setError(t('passwordWeak'));
-      return;
-    }
-    setLoading(true);
-    try {
-      const response = await registerAccount(email, password, displayName, username.trim());
-      console.log('[Register] Response:', response);
-      if (response.needsVerification) {
-        setMode('verify');
-        if (response.devCode) {
-          // In dev mode, show code prominently
-          setInfo(`${t('authHint')}\n\n✅ ${t('devCode')}: ${response.devCode}\n\n(Режим розробки - код показано тут)`);
-        } else {
-          setInfo(t('authHint'));
-        }
-        setResendTimer(60);
-        // Запам'ятовуємо, що це реєстрація
-        (window as any).__isRegistering = true;
-      } else {
-        // Auto-verified (dev mode) - login immediately
-        console.log('[Register] Auto-verified, logging in...');
-        const loginResponse = await loginAccount(email, password);
-        if (loginResponse.token && loginResponse.user) {
-          onAuthSuccess(loginResponse.user, loginResponse.token, true);
-        }
-      }
-    } catch (err: any) {
-      const message = err.message === 'Failed to fetch' ? t('serverUnavailable') : err.message;
-      if (message === 'Username already taken') {
-        setError(t('usernameTaken'));
-      } else {
-        setError(message || 'Registration failed');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  // handleVerify removed
 
-  const handleVerify = async () => {
-    resetAlerts();
-    setLoading(true);
-    try {
-      await verifyCode(email, code);
-      setInfo(t('authHint'));
-      // Автоматично логінимось після підтвердження
-      const isRegistering = (window as any).__isRegistering || false;
-      delete (window as any).__isRegistering;
-      const response = await loginAccount(email, password);
-      if (response.token && response.user) {
-        onAuthSuccess(response.user, response.token, isRegistering);
-      }
-    } catch (err: any) {
-      const message = err.message === 'Failed to fetch' ? t('serverUnavailable') : err.message;
-      setError(message || 'Verification failed');
-      setLoading(false);
-    }
-  };
-
-  const handleResend = async () => {
-    resetAlerts();
-    setLoading(true);
-    try {
-      const response = await resendCode(email);
-      console.log('[Resend] Response:', response);
-      if (response.devCode) {
-        setInfo(`${t('authHint')}\n\n✅ ${t('devCode')}: ${response.devCode}\n\n(Режим розробки - код показано тут)`);
-      } else {
-        setInfo(t('authHint'));
-      }
-      setResendTimer(60);
-    } catch (err: any) {
-      const message = err.message === 'Failed to fetch' ? t('serverUnavailable') : err.message;
-      setError(message || 'Failed to resend');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // handleResend removed
 
   return (
     <Box
@@ -209,7 +104,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
             ? 'radial-gradient(800px circle at 10% 20%, rgba(34,197,94,0.2), transparent 55%), radial-gradient(900px circle at 90% 10%, rgba(99,102,241,0.2), transparent 60%), radial-gradient(700px circle at 80% 90%, rgba(16,185,129,0.12), transparent 60%), linear-gradient(120deg, #0b0f14 0%, #0d1117 35%, #0f172a 100%)'
             : 'radial-gradient(800px circle at 10% 20%, rgba(16,185,129,0.18), transparent 55%), radial-gradient(900px circle at 90% 10%, rgba(79,70,229,0.18), transparent 60%), linear-gradient(120deg, #eef2ff 0%, #f8fafc 45%, #e2e8f0 100%)',
         transition: 'background 0.5s ease-in-out',
-        p: 3,
+        p: { xs: 0.5, sm: 2, md: 3 },
       }}
     >
       <Fade in timeout={600}>
@@ -217,13 +112,15 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
           elevation={0}
           sx={{
             width: '100%',
-            maxWidth: showBrandPanel ? 860 : 420,
-            borderRadius: 3,
+            maxWidth: { xs: 370, sm: 420, md: showBrandPanel ? 860 : 420 },
+            borderRadius: { xs: 2, sm: 3 },
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',
             overflow: 'hidden',
             transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+            boxShadow: { xs: 2, sm: 4 },
+            m: { xs: 0.5, sm: 2 },
           }}
         >
           <Box
@@ -232,19 +129,20 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
               flexDirection: { xs: 'column', md: showBrandPanel ? 'row' : 'column' },
             }}
           >
-            <Box sx={{ p: 4, flex: 1 }}>
+            <Box sx={{ p: { xs: 1.5, sm: 3, md: 4 }, flex: 1 }}>
               <Fade in key={mode} timeout={400}>
                 <Box>
                   <Typography 
-                    variant="h5" 
+                    variant="h6"
                     sx={{ 
                       fontWeight: 700, 
-                      mb: 1,
+                      mb: { xs: 0.5, sm: 1 },
+                      fontSize: { xs: '1.2rem', sm: '1.5rem' },
                     }}
                   >
                     {t('authTitle')}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', mb: { xs: 1.5, sm: 3 }, fontSize: { xs: '0.95rem', sm: '1rem' } }}>
                     {mode === 'verify' ? t('authHint') : ''}
                   </Typography>
                 </Box>
@@ -265,7 +163,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                 </Collapse>
               )}
 
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.2, sm: 2 } }}>
                 <Fade in timeout={500}>
                   <TextField
                     label={t('email')}
@@ -273,9 +171,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     fullWidth
+                    size="small"
                     disabled={loading || mode === 'verify'}
-                    error={Boolean(email) && !emailValid}
-                    helperText={Boolean(email) && !emailValid ? t('invalidEmail') : ' '}
                     sx={{
                       '& .MuiOutlinedInput-root': {
                         transition: 'all 0.3s ease',
@@ -298,9 +195,9 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       fullWidth
+                      size="small"
                       disabled={loading}
-                      error={Boolean(password) && !passwordStrong}
-                      helperText={Boolean(password) && !passwordStrong ? t('passwordWeak') : ' '}
+                      // error and helperText removed for password
                       sx={{
                         '& .MuiOutlinedInput-root': {
                           transition: 'all 0.3s ease',
@@ -337,9 +234,9 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                         value={displayName}
                         onChange={(e) => setDisplayName(e.target.value)}
                         fullWidth
+                        size="small"
                         disabled={loading}
-                        error={Boolean(displayName) && !nameValid}
-                        helperText={Boolean(displayName) && !nameValid ? t('nameMin') : ' '}
+                        // error and helperText removed for displayName
                         sx={{
                           '& .MuiOutlinedInput-root': {
                             transition: 'all 0.3s ease',
@@ -362,13 +259,10 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                           setUsername(filtered);
                         }}
                         fullWidth
+                        size="small"
                         disabled={loading}
-                        error={Boolean(username) && !usernameValid}
-                        helperText={
-                          Boolean(username) && !usernameValid
-                            ? t('usernameInvalidChars')
-                            : t('usernameHint')
-                        }
+                        // error and helperText removed for username
+                        helperText={t('usernameHint')}
                         placeholder="john_doe"
                         sx={{
                           '& .MuiOutlinedInput-root': {
@@ -386,41 +280,20 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                   </>
                 )}
 
-                {mode === 'verify' && (
-                  <Fade in timeout={500}>
-                    <TextField
-                      label={t('verificationCode')}
-                      value={code}
-                      onChange={(e) => setCode(e.target.value)}
-                      fullWidth
-                      disabled={loading}
-                      autoFocus
-                      helperText={' '}
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          transition: 'all 0.3s ease',
-                          '&:hover': {
-                            transform: 'translateY(-2px)',
-                          },
-                          '&.Mui-focused': {
-                            transform: 'translateY(-2px)',
-                          },
-                        },
-                      }}
-                    />
-                  </Fade>
-                )}
+                {/* Верифікаційне поле видалено */}
 
                 {mode === 'login' && (
                   <Fade in timeout={600}>
                     <Button
                       variant="contained"
                       onClick={handleLogin}
-                      disabled={loading || !email || !password || !emailValid || !passwordStrong}
+                      disabled={loading || !email || !password}
                       sx={{
-                        py: 1.5,
+                        py: { xs: 1, sm: 1.5 },
                         fontWeight: 600,
+                        fontSize: { xs: '1rem', sm: '1.1rem' },
                         transition: 'all 0.3s ease',
+                        borderRadius: 2,
                         '&:hover': {
                           transform: 'translateY(-2px)',
                           boxShadow: 4,
@@ -439,8 +312,28 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                   <Fade in timeout={900}>
                     <Button
                       variant="contained"
-                      onClick={handleRegister}
-                      disabled={loading || !email || !password || !emailValid || !nameValid || !passwordStrong}
+                      onClick={async () => {
+                        resetAlerts();
+                        if (!email || !password || !displayName || !username) {
+                          setError(t('fillAllFields'));
+                          return;
+                        }
+                        setLoading(true);
+                        try {
+                          const response = await registerAccount(email, password, displayName, username);
+                          if (response.token && response.user) {
+                            onAuthSuccess(response.user, response.token, true);
+                          } else {
+                            setInfo(t('authHint'));
+                          }
+                        } catch (err: any) {
+                          const message = err.message === 'Failed to fetch' ? t('serverUnavailable') : err.message;
+                          setError(message || 'Registration failed');
+                        } finally {
+                          setLoading(false);
+                        }
+                      }}
+                      disabled={loading || !email || !password || !displayName || !username}
                       sx={{
                         py: 1.5,
                         fontWeight: 600,
@@ -459,29 +352,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                   </Fade>
                 )}
 
-                {mode === 'verify' && (
-                  <Fade in timeout={600}>
-                    <Button 
-                      variant="contained" 
-                      onClick={handleVerify} 
-                      disabled={loading || !code || !email}
-                      sx={{
-                        py: 1.5,
-                        fontWeight: 600,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: 4,
-                        },
-                        '&:active': {
-                          transform: 'translateY(0px)',
-                        },
-                      }}
-                    >
-                      {t('verify')}
-                    </Button>
-                  </Fade>
-                )}
+                {/* Кнопка підтвердження коду видалена */}
               </Box>
 
               <Divider sx={{ my: 3 }} />
@@ -522,33 +393,21 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                 </Fade>
               )}
 
-              {mode === 'verify' && (
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap' }}>
-                  <Button variant="text" onClick={() => setMode('login')} disabled={loading}>
-                    {t('backToLogin')}
-                  </Button>
-                  <Button
-                    variant="text"
-                    onClick={handleResend}
-                    disabled={loading || !email || resendTimer > 0}
-                  >
-                    {resendTimer > 0 ? `${t('resendCode')} (${resendTimer})` : t('resendCode')}
-                  </Button>
-                </Box>
-              )}
+              {/* Кнопки для повторної відправки коду видалені */}
             </Box>
 
             {showBrandPanel && (
               <Fade in timeout={800}>
                 <Box
                   sx={{
-                    width: { xs: '100%', md: 320 },
-                    display: 'flex',
+                    width: { xs: '100%', md: 260 },
+                    minWidth: { xs: '100%', md: 200 },
+                    display: { xs: 'none', md: 'flex' },
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 2,
-                    p: 4,
+                    p: { xs: 1.5, sm: 3, md: 4 },
                     background: mode === 'register' 
                       ? 'linear-gradient(-45deg, #0b0f14, #111827, #1e293b, #0f172a)'
                       : 'linear-gradient(-45deg, #1e293b, #0f172a, #0b0f14, #111827)',
@@ -576,8 +435,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                     src={appLogo}
                     alt="LUMYN"
                     sx={{
-                      width: 120,
-                      height: 120,
+                      width: { xs: 80, sm: 100, md: 120 },
+                      height: { xs: 80, sm: 100, md: 120 },
                       objectFit: 'contain',
                       zIndex: 1,
                       filter: 'drop-shadow(0 12px 30px rgba(0,0,0,0.35))',
@@ -589,6 +448,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                     sx={{ 
                       fontWeight: 700, 
                       zIndex: 1,
+                      fontSize: { xs: '1.1rem', sm: '1.2rem', md: '1.3rem' },
                       transition: 'all 0.3s ease',
                     }}
                   >
@@ -600,6 +460,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                       color: '#cbd5f5', 
                       zIndex: 1, 
                       textAlign: 'center',
+                      fontSize: { xs: '0.9rem', sm: '1rem' },
                       transition: 'all 0.3s ease',
                     }}
                   >
