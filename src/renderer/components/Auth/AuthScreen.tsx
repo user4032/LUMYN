@@ -136,6 +136,13 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
         setResendTimer(60);
         // Запам'ятовуємо, що це реєстрація
         (window as any).__isRegistering = true;
+      } else {
+        // Auto-verified (dev mode) - login immediately
+        console.log('[Register] Auto-verified, logging in...');
+        const loginResponse = await loginAccount(email, password);
+        if (loginResponse.token && loginResponse.user) {
+          onAuthSuccess(loginResponse.user, loginResponse.token, true);
+        }
       }
     } catch (err: any) {
       const message = err.message === 'Failed to fetch' ? t('serverUnavailable') : err.message;

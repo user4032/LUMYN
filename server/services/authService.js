@@ -73,6 +73,7 @@ const registerUser = async (email, password, displayName, username) => {
     existing.passwordHash = passwordHash;
     existing.displayName = name;
     existing.username = userUsername.toLowerCase();
+    existing.verified = DEV_CODE ? true : false; // Auto-verify in dev mode
     user = await existing.save();
   } else {
     user = await User.create({
@@ -80,11 +81,17 @@ const registerUser = async (email, password, displayName, username) => {
       username: userUsername.toLowerCase(),
       passwordHash,
       displayName: name,
-      verified: false,
+      verified: DEV_CODE ? true : false, // Auto-verify in dev mode
     });
   }
 
-  // Generate and send verification code
+  // In development mode, skip email verification completely
+  if (DEV_CODE) {
+    console.log(`[DEV] User ${normalizedEmail} auto-verified (dev mode)`);
+    return { success: true, needsVerification: false };
+  }
+
+  // In production mode, send verification code
   await VerificationCode.deleteMany({ userId: user._id });
   const code = createCode();
   await VerificationCode.create({
@@ -93,19 +100,6 @@ const registerUser = async (email, password, displayName, username) => {
     expiresAt: new Date(Date.now() + 10 * 60 * 1000),
   });
 
-  // In development mode, always return the code
-  if (DEV_CODE) {
-    console.log(`[DEV] Verification code for ${normalizedEmail}: ${code}`);
-    try {
-      await sendVerificationEmail(normalizedEmail, code);
-      console.log(`[DEV] Email sent successfully to ${normalizedEmail}`);
-    } catch (err) {
-      console.warn(`[DEV] Failed to send email, but returning code anyway:`, err.message);
-    }
-    return { success: true, needsVerification: true, devCode: code };
-  }
-
-  // In production mode, email must be sent successfully
   try {
     await sendVerificationEmail(normalizedEmail, code);
     return { success: true, needsVerification: true };
