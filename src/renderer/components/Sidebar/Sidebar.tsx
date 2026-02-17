@@ -320,63 +320,93 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
               overflowY: 'auto',
             }}
           >
-            {servers.map((server) => (
-              <Box
-                key={server.id}
-                onMouseEnter={(e) => {
-                  if (popoverTimeoutRef.current) {
-                    clearTimeout(popoverTimeoutRef.current);
-                  }
-                  setPopoverAnchor(e.currentTarget);
-                  setHoveredServerId(server.id);
-                }}
-                onMouseLeave={() => {
-                  popoverTimeoutRef.current = setTimeout(() => {
+            {servers.map((server) => {
+              const isHovered = hoveredServerId === server.id;
+              return (
+                <Box
+                  key={server.id}
+                  onMouseEnter={(e) => {
+                    if (popoverTimeoutRef.current) {
+                      clearTimeout(popoverTimeoutRef.current);
+                    }
+                    setPopoverAnchor(e.currentTarget);
+                    setHoveredServerId(server.id);
+                  }}
+                  onMouseLeave={() => {
+                    popoverTimeoutRef.current = setTimeout(() => {
+                      setPopoverAnchor(null);
+                      setHoveredServerId(null);
+                    }, 200);
+                  }}
+                  onClick={() => {
+                    handleSelectServer(server.id);
                     setPopoverAnchor(null);
                     setHoveredServerId(null);
-                  }, 200);
-                }}
-                onClick={() => {
-                  handleSelectServer(server.id);
-                  setPopoverAnchor(null);
-                  setHoveredServerId(null);
-                }}
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                }}
-              >
-                {(() => {
-                  const isHovered = hoveredServerId === server.id;
-                  return (
-                <Avatar
-                  src={server.icon || undefined}
-                  sx={(theme) => ({
-                    width: 48,
-                    height: 48,
-                    bgcolor: activeServer === server.id || isHovered
-                      ? theme.palette.primary.main
-                      : theme.palette.mode === 'dark'
-                        ? '#36393f'
-                        : '#ffffff',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                    borderRadius: activeServer === server.id || isHovered ? '35%' : '50%',
-                    color: activeServer === server.id || isHovered ? '#ffffff' : theme.palette.text.primary,
+                  }}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
                     position: 'relative',
-                    '&:hover': {
-                      borderRadius: '35%',
-                      bgcolor: activeServer === server.id ? theme.palette.primary.dark : theme.palette.primary.main,
-                      color: '#ffffff',
-                    },
-                  })}
+                  }}
                 >
-                  {!server.icon && server.name[0].toUpperCase()}
-                </Avatar>
-                  );
-                })()}
+                  <Avatar
+                    src={server.icon || undefined}
+                    sx={(theme) => ({
+                      width: 48,
+                      height: 48,
+                      bgcolor: activeServer === server.id || isHovered
+                        ? theme.palette.primary.main
+                        : theme.palette.mode === 'dark'
+                          ? '#36393f'
+                          : '#ffffff',
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      borderRadius: activeServer === server.id || isHovered ? '35%' : '50%',
+                      color: activeServer === server.id || isHovered ? '#ffffff' : theme.palette.text.primary,
+                      position: 'relative',
+                      '&:hover': {
+                        borderRadius: '35%',
+                        bgcolor: activeServer === server.id ? theme.palette.primary.dark : theme.palette.primary.main,
+                        color: '#ffffff',
+                      },
+                    })}
+                  >
+                    {!server.icon && server.name[0].toUpperCase()}
+                  </Avatar>
+                  <Box
+                    sx={(theme) => ({
+                      position: 'absolute',
+                      left: 'calc(100% + 10px)',
+                      top: '50%',
+                      transform: isHovered ? 'translateY(-50%) translateX(0)' : 'translateY(-50%) translateX(-6px)',
+                      opacity: isHovered ? 1 : 0,
+                      pointerEvents: 'none',
+                      whiteSpace: 'nowrap',
+                      px: 1.25,
+                      py: 0.6,
+                      borderRadius: 2,
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      letterSpacing: '0.01em',
+                      color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#0f172a',
+                      background:
+                        theme.palette.mode === 'dark'
+                          ? 'rgba(15, 23, 42, 0.92)'
+                          : 'rgba(255, 255, 255, 0.95)',
+                      border: '1px solid',
+                      borderColor: theme.palette.divider,
+                      boxShadow:
+                        theme.palette.mode === 'dark'
+                          ? '0 10px 24px rgba(0,0,0,0.35)'
+                          : '0 10px 24px rgba(15,23,42,0.12)',
+                      transition: 'all 0.2s ease',
+                      zIndex: 5,
+                    })}
+                  >
+                    {server.name}
+                  </Box>
 
                 {/* Popover with server info */}
                 <Popover
@@ -463,7 +493,8 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
                   </Paper>
                 </Popover>
               </Box>
-            ))}
+              );
+            })}
             
             {/* Кнопка створення сервера */}
             <Tooltip title={t('addServer')} placement="right">

@@ -383,6 +383,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    position: 'relative',
                   }}
                 >
                   <Avatar
@@ -413,6 +414,38 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
                   >
                     {!server.icon && server.name[0].toUpperCase()}
                   </Avatar>
+                  <Box
+                    sx={(theme) => ({
+                      position: 'absolute',
+                      left: 'calc(100% + 10px)',
+                      top: '50%',
+                      transform: isHovered ? 'translateY(-50%) translateX(0)' : 'translateY(-50%) translateX(-6px)',
+                      opacity: isHovered ? 1 : 0,
+                      pointerEvents: 'none',
+                      whiteSpace: 'nowrap',
+                      px: 1.25,
+                      py: 0.6,
+                      borderRadius: 2,
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      letterSpacing: '0.01em',
+                      color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#0f172a',
+                      background:
+                        theme.palette.mode === 'dark'
+                          ? 'rgba(15, 23, 42, 0.92)'
+                          : 'rgba(255, 255, 255, 0.95)',
+                      border: '1px solid',
+                      borderColor: theme.palette.divider,
+                      boxShadow:
+                        theme.palette.mode === 'dark'
+                          ? '0 10px 24px rgba(0,0,0,0.35)'
+                          : '0 10px 24px rgba(15,23,42,0.12)',
+                      transition: 'all 0.2s ease',
+                      zIndex: 5,
+                    })}
+                  >
+                    {server.name}
+                  </Box>
 
                   {/* Popover with server info */}
                   <Popover
