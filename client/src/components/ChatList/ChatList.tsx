@@ -14,6 +14,8 @@ import {
   InputAdornment,
   IconButton,
   Tooltip,
+  Grow,
+  Fade,
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -189,12 +191,36 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
                 size="small" 
                 onClick={() => setShowHiddenChats(!showHiddenChats)}
                 color={showHiddenChats ? 'primary' : 'inherit'}
+                sx={{
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    transform: 'scale(1.1)',
+                    bgcolor: 'action.hover',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.95)',
+                  },
+                }}
               >
                 {showHiddenChats ? <VisibilityIcon fontSize="small" /> : <VisibilityOffIcon fontSize="small" />}
               </IconButton>
             </Tooltip>
-            <IconButton size="small" onClick={() => setFriendsOpen(true)}>
+            <IconButton 
+              size="small" 
+              onClick={() => setFriendsOpen(true)}
+              sx={{
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                  bgcolor: 'action.hover',
+                },
+                '&:active': {
+                  transform: 'scale(0.95)',
+                },
+              }}
+            >
               <PersonAddIcon fontSize="small" />
+            </IconButton>
             </IconButton>
           </Box>
         </Box>
@@ -217,6 +243,15 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
             '& .MuiOutlinedInput-root': {
               borderRadius: 2,
               bgcolor: 'background.default',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: 2,
+              },
+              '&.Mui-focused': {
+                transform: 'translateY(-2px)',
+                boxShadow: 3,
+              },
             },
           }}
         />
@@ -224,12 +259,17 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
 
       {/* Список чатів */}
       <List sx={{ flex: 1, overflow: 'auto', p: 0 }}>
-        {sortedChats.map(({ chat }) => {
+        {sortedChats.map(({ chat }, index) => {
           const chatMessages = messagesByChat[chat.id] || [];
           const lastMessage = chatMessages[chatMessages.length - 1];
           return (
-          <ListItem
+          <Grow 
+            in 
+            timeout={300 + index * 50} 
             key={chat.id}
+            style={{ transformOrigin: '0 0 0' }}
+          >
+          <ListItem
             disablePadding
             secondaryAction={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -245,13 +285,19 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
               sx={{
                 px: 2,
                 py: 1.5,
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 '&.Mui-selected': {
                   bgcolor: 'rgba(88, 101, 242, 0.1)',
                   borderLeft: '3px solid',
                   borderColor: 'primary.main',
+                  transform: 'translateX(0px)',
                 },
                 '&:hover': {
                   bgcolor: 'rgba(255, 255, 255, 0.05)',
+                  transform: 'translateX(4px)',
+                },
+                '&:active': {
+                  transform: 'scale(0.98)',
                 },
               }}
             >
@@ -332,6 +378,7 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
               />
             </ListItemButton>
           </ListItem>
+          </Grow>
         );
         })}
       </List>
