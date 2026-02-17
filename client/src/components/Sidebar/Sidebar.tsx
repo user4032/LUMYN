@@ -472,6 +472,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
               borderColor: 'divider',
               maxHeight: 300,
               overflowY: 'auto',
+              overflowX: 'hidden',
             }}
           >
             {servers.map((server) => {

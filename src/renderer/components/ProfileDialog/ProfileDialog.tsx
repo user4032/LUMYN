@@ -269,6 +269,12 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Support GIF, PNG, JPEG, WebP
+      if (!['image/gif', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp'].includes(file.type)) {
+        setSaveError('Please upload a GIF, PNG, JPEG, or WebP image');
+        return;
+      }
+      
       // Обмежуємо розмір на 500KB
       if (file.size > 500 * 1024) {
         setSaveError('Avatar too large (max 500KB)');
@@ -319,6 +325,12 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
     const file = event.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) return;
+
+    // Support GIF, PNG, JPEG, WebP
+    if (!['image/gif', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp'].includes(file.type)) {
+      alert('Please upload a GIF, PNG, JPEG, or WebP image');
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -382,7 +394,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
               <input
                 type="file"
                 hidden
-                accept="image/*"
+                accept="image/gif,image/png,image/jpeg,image/webp"
                 onChange={handleAvatarChange}
               />
             </IconButton>
@@ -414,7 +426,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
             ref={bannerInputRef}
             type="file"
             hidden
-            accept="image/*"
+            accept="image/gif,image/png,image/jpeg,image/webp"
             onChange={handleBannerUpload}
           />
           {profileBanner && (

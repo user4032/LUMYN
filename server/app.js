@@ -216,6 +216,12 @@ const startServer = async () => {
       console.log(`✅ Server running on port ${PORT}`);
       console.log(`   Health check: http://localhost:${PORT}/health`);
       console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
+      
+      // Log dev mode status
+      const devMode = String(process.env.AUTH_DEV_CODE || '').toLowerCase() === 'true';
+      if (devMode) {
+        console.log(`   🔧 DEV MODE: Verification codes will be shown in responses`);
+      }
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

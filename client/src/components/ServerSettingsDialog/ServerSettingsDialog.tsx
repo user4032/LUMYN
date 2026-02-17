@@ -177,6 +177,12 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
     const file = e.target.files?.[0];
     if (!file || !file.type.startsWith('image/')) return;
 
+    // Support GIF, PNG, JPEG, WebP
+    if (!['image/gif', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp'].includes(file.type)) {
+      alert('Please upload a GIF, PNG, JPEG, or WebP image');
+      return;
+    }
+
     const reader = new FileReader();
     reader.onloadend = () => {
       setServerIcon(reader.result as string);
@@ -187,6 +193,12 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
   const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !file.type.startsWith('image/')) return;
+
+    // Support GIF, PNG, JPEG, WebP
+    if (!['image/gif', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp'].includes(file.type)) {
+      alert('Please upload a GIF, PNG, JPEG, or WebP image');
+      return;
+    }
 
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -398,7 +410,7 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
                   ref={fileInputRef}
                   type="file"
                   hidden
-                  accept="image/*"
+                  accept="image/gif,image/png,image/jpeg,image/webp"
                   onChange={handleIconUpload}
                 />
               </Box>
@@ -454,7 +466,7 @@ const ServerSettingsDialog: React.FC<ServerSettingsDialogProps> = ({ open, onClo
               </Box>
               <input
                 type="file"
-                accept="image/*"
+                accept="image/gif,image/png,image/jpeg,image/webp"
                 hidden
                 ref={bannerInputRef}
                 onChange={handleBannerUpload}

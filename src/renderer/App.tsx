@@ -8,9 +8,7 @@ import ServerList from './components/ServerList/ServerList';
 import MembersList from './components/MembersList/MembersList';
 import ThreadsView from './components/Threads/ThreadsView';
 import UserProfilePanel from './components/UserProfilePanel/UserProfilePanel';
-import SplashScreen from './components/SplashScreen/SplashScreen';
 import AuthScreen from './components/Auth/AuthScreen';
-import WelcomeAnimation from './components/WelcomeAnimation/WelcomeAnimation';
 import { NotificationsPanel } from './components/NotificationsPanel/NotificationsPanel';
 import { setUser } from './store/slices/userSlice';
 import { setTheme, setLanguage } from './store/slices/uiSlice';
@@ -29,9 +27,6 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<'chats' | 'servers' | 'threads'>('chats');
   const [selectedChat, setSelectedChat] = useState<string | null>(null);
   const [selectedServer, setSelectedServer] = useState<string | null>(null);
-  const [showSplash, setShowSplash] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(false);
-  const [isNewUser, setIsNewUser] = useState(false);
   const [notificationsPanelOpen, setNotificationsPanelOpen] = useState(false);
   
   // Отримуємо активний канал та тему зі стору
@@ -337,22 +332,10 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      {showWelcome ? (
-        <WelcomeAnimation isNewUser={isNewUser} onFinish={() => setShowWelcome(false)} />
-      ) : showSplash ? (
-        <SplashScreen
-          onFinish={() => {
-            setShowSplash(false);
-            if (isAuthenticated) {
-              setShowWelcome(true);
-            }
-          }}
-        />
-      ) : !isAuthenticated ? (
+      {!isAuthenticated ? (
         <AuthScreen
-          onAuthSuccess={async (user, token, isRegistering) => {
+          onAuthSuccess={async (user, token) => {
             localStorage.setItem('disgram_auth_token', token);
-            setIsNewUser(isRegistering || false);
             dispatch(
               setUser({
                 id: user.id,
@@ -377,8 +360,6 @@ const App: React.FC = () => {
             
             // Завантажуємо чати та повідомлення з localStorage
             dispatch(loadFromStorage());
-            setShowWelcome(false);
-            setShowSplash(true);
           }}
         />
       ) : (

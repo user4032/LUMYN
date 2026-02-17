@@ -45,14 +45,7 @@ const gradientShift = keyframes`
   }
 `;
 
-const floatAnimation = keyframes`
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-`;
+
 
 const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
   const language = useSelector((state: RootState) => state.ui.language);
@@ -132,10 +125,15 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
     setLoading(true);
     try {
       const response = await registerAccount(email, password, displayName, username.trim());
+      console.log('[Register] Response:', response);
       if (response.needsVerification) {
         setMode('verify');
-        const devInfo = response.devCode ? ` ${t('devCode')}: ${response.devCode}` : '';
-        setInfo(`${t('authHint')}${devInfo}`);
+        if (response.devCode) {
+          // In dev mode, show code prominently
+          setInfo(`${t('authHint')}\n\n✅ ${t('devCode')}: ${response.devCode}\n\n(Режим розробки - код показано тут)`);
+        } else {
+          setInfo(t('authHint'));
+        }
         setResendTimer(60);
         // Запам'ятовуємо, що це реєстрація
         (window as any).__isRegistering = true;
@@ -177,8 +175,12 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
     setLoading(true);
     try {
       const response = await resendCode(email);
-      const devInfo = response.devCode ? ` ${t('devCode')}: ${response.devCode}` : '';
-      setInfo(`${t('authHint')}${devInfo}`);
+      console.log('[Resend] Response:', response);
+      if (response.devCode) {
+        setInfo(`${t('authHint')}\n\n✅ ${t('devCode')}: ${response.devCode}\n\n(Режим розробки - код показано тут)`);
+      } else {
+        setInfo(t('authHint'));
+      }
       setResendTimer(60);
     } catch (err: any) {
       const message = err.message === 'Failed to fetch' ? t('serverUnavailable') : err.message;
@@ -231,7 +233,6 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                     sx={{ 
                       fontWeight: 700, 
                       mb: 1,
-                      animation: `${floatAnimation} 3s ease-in-out infinite`,
                     }}
                   >
                     {t('authTitle')}
@@ -573,7 +574,6 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                       objectFit: 'contain',
                       zIndex: 1,
                       filter: 'drop-shadow(0 12px 30px rgba(0,0,0,0.35))',
-                      animation: `${floatAnimation} 4s ease-in-out infinite`,
                       transition: 'all 0.3s ease',
                     }}
                   />

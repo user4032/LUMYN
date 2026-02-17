@@ -93,13 +93,23 @@ const registerUser = async (email, password, displayName, username) => {
     expiresAt: new Date(Date.now() + 10 * 60 * 1000),
   });
 
+  // In development mode, always return the code
+  if (DEV_CODE) {
+    console.log(`[DEV] Verification code for ${normalizedEmail}: ${code}`);
+    try {
+      await sendVerificationEmail(normalizedEmail, code);
+      console.log(`[DEV] Email sent successfully to ${normalizedEmail}`);
+    } catch (err) {
+      console.warn(`[DEV] Failed to send email, but returning code anyway:`, err.message);
+    }
+    return { success: true, needsVerification: true, devCode: code };
+  }
+
+  // In production mode, email must be sent successfully
   try {
     await sendVerificationEmail(normalizedEmail, code);
     return { success: true, needsVerification: true };
   } catch (err) {
-    if (DEV_CODE) {
-      return { success: true, needsVerification: true, devCode: code };
-    }
     throw new Error('Failed to send verification email');
   }
 };
@@ -126,13 +136,23 @@ const resendVerificationCode = async (email) => {
     expiresAt: new Date(Date.now() + 10 * 60 * 1000),
   });
 
+  // In development mode, always return the code
+  if (DEV_CODE) {
+    console.log(`[DEV] Resend verification code for ${user.email}: ${code}`);
+    try {
+      await sendVerificationEmail(user.email, code);
+      console.log(`[DEV] Email sent successfully to ${user.email}`);
+    } catch (err) {
+      console.warn(`[DEV] Failed to send email, but returning code anyway:`, err.message);
+    }
+    return { success: true, devCode: code };
+  }
+
+  // In production mode, email must be sent successfully
   try {
     await sendVerificationEmail(user.email, code);
     return { success: true };
   } catch (err) {
-    if (DEV_CODE) {
-      return { success: true, devCode: code };
-    }
     throw new Error('Failed to send verification email');
   }
 };
