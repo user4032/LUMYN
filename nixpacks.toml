@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ['nodejs_20']
+
+[phases.install]
+cmds = ['cd server && npm install']
+
+[phases.build]
+cmds = ['echo "No build step required"']
+
+[start]
+cmd = 'cd server && npm start'

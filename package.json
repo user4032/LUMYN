@@ -12,6 +12,7 @@
     "electron"
   ],
   "scripts": {
+    "start": "cd server && npm start",
     "install:all": "npm install && npm install --workspace=client && npm install --workspace=server && npm install --workspace=electron",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\" \"npm run dev:electron\"",
     "dev:client": "npm run dev --workspace=client",
