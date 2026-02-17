@@ -339,11 +339,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
             <BrutalServersIcon />
           </IconButton>
         </Tooltip>
-            })}
-          >
-            <BrutalServersIcon />
-          </IconButton>
-        </Tooltip>
 
         {/* Список серверів */}
         {serversExpanded && (
@@ -360,154 +355,153 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
               overflowY: 'auto',
             }}
           >
-            {servers.map((server) => (
-              <Box
-                key={server.id}
-                onMouseEnter={(e) => {
-                  if (popoverTimeoutRef.current) {
-                    clearTimeout(popoverTimeoutRef.current);
-                  }
-                  setPopoverAnchor(e.currentTarget);
-                  setHoveredServerId(server.id);
-                }}
-                onMouseLeave={() => {
-                  popoverTimeoutRef.current = setTimeout(() => {
+            {servers.map((server) => {
+              const isHovered = hoveredServerId === server.id;
+              return (
+                <Box
+                  key={server.id}
+                  onMouseEnter={(e) => {
+                    if (popoverTimeoutRef.current) {
+                      clearTimeout(popoverTimeoutRef.current);
+                    }
+                    setPopoverAnchor(e.currentTarget);
+                    setHoveredServerId(server.id);
+                  }}
+                  onMouseLeave={() => {
+                    popoverTimeoutRef.current = setTimeout(() => {
+                      setPopoverAnchor(null);
+                      setHoveredServerId(null);
+                    }, 200);
+                  }}
+                  onClick={() => {
+                    handleSelectServer(server.id);
                     setPopoverAnchor(null);
                     setHoveredServerId(null);
-                  }, 200);
-                }}
-                onClick={() => {
-                  handleSelectServer(server.id);
-                  setPopoverAnchor(null);
-                  setHoveredServerId(null);
-                }}
-                sx={{
-                  display: 'flex',
-                  justif(theme.palette.mode === 'dark' ? '#FFFFFF' : theme.palette.primary.main)
-                      : theme.palette.mode === 'dark'
-                        ? '#36393f'
-                        : '#ffffff',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                    borderRadius: activeServer === server.id || isHovered ? '35%' : '50%',
-                    color: activeServer === server.id || isHovered 
-                      ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
-                      : theme.palette.text.primary,
-                    position: 'relative',
-                    '&:hover': {
-                      borderRadius: '35%',
-                      bgcolor: activeServer === server.id 
-                        ? (theme.palette.mode === 'dark' ? '#E5E5E5' : theme.palette.primary.dark)
-                        : (theme.palette.mode === 'dark' ? '#FFFFFF' : theme.palette.primary.main),
-                      color: theme.palette.mode === 'dark' ? '#000000' me.palette.primary.main
-                      : theme.palette.mode === 'dark'
-                        ? '#36393f'
-                        : '#ffffff',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                    borderRadius: activeServer === server.id || isHovered ? '35%' : '50%',
-                    color: activeServer === server.id || isHovered ? '#ffffff' : theme.palette.text.primary,
-                    position: 'relative',
-                    '&:hover': {
-                      borderRadius: '35%',
-                      bgcolor: activeServer === server.id ? theme.palette.primary.dark : theme.palette.primary.main,
-                      color: '#ffffff',
-                    },
-                  })}
+                  }}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
                 >
-                  {!server.icon && server.name[0].toUpperCase()}
-                </Avatar>
-                  );
-                })()}
+                  <Avatar
+                    src={server.icon}
+                    sx={(theme) => ({
+                      width: 48,
+                      height: 48,
+                      cursor: 'pointer',
+                      bgcolor: activeServer === server.id || isHovered 
+                        ? (theme.palette.mode === 'dark' ? '#FFFFFF' : theme.palette.primary.main)
+                        : (theme.palette.mode === 'dark' ? '#36393f' : '#ffffff'),
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      borderRadius: activeServer === server.id || isHovered ? '35%' : '50%',
+                      color: activeServer === server.id || isHovered 
+                        ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
+                        : theme.palette.text.primary,
+                      position: 'relative',
+                      '&:hover': {
+                        borderRadius: '35%',
+                        bgcolor: activeServer === server.id 
+                          ? (theme.palette.mode === 'dark' ? '#E5E5E5' : theme.palette.primary.dark)
+                          : (theme.palette.mode === 'dark' ? '#FFFFFF' : theme.palette.primary.main),
+                        color: theme.palette.mode === 'dark' ? '#000000' : '#ffffff',
+                      },
+                    })}
+                  >
+                    {!server.icon && server.name[0].toUpperCase()}
+                  </Avatar>
 
-                {/* Popover with server info */}
-                <Popover
-                  open={hoveredServerId === server.id && !!popoverAnchor}
-                  anchorEl={popoverAnchor}
-                  onClose={() => {
-                    setPopoverAnchor(null);
-                    setHoveredServerId(null);
-                  }}
-                  sx={{ pointerEvents: 'none' }}
-                  anchorOrigin={{
-                    vertical: 'center',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'center',
-                    horizontal: 'left',
-                  }}
-                  slotProps={{
-                    paper: {
-                      onMouseEnter: () => {
-                        if (popoverTimeoutRef.current) {
-                          clearTimeout(popoverTimeoutRef.current);
-                        }
+                  {/* Popover with server info */}
+                  <Popover
+                    open={hoveredServerId === server.id && !!popoverAnchor}
+                    anchorEl={popoverAnchor}
+                    onClose={() => {
+                      setPopoverAnchor(null);
+                      setHoveredServerId(null);
+                    }}
+                    sx={{ pointerEvents: 'none' }}
+                    anchorOrigin={{
+                      vertical: 'center',
+                      horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                      vertical: 'center',
+                      horizontal: 'left',
+                    }}
+                    slotProps={{
+                      paper: {
+                        onMouseEnter: () => {
+                          if (popoverTimeoutRef.current) {
+                            clearTimeout(popoverTimeoutRef.current);
+                          }
+                        },
+                        onMouseLeave: () => {
+                          popoverTimeoutRef.current = setTimeout(() => {
+                            setPopoverAnchor(null);
+                            setHoveredServerId(null);
+                          }, 200);
+                        },
+                        sx: {
+                          pointerEvents: 'auto',
+                          ml: 1,
+                        },
                       },
-                      onMouseLeave: () => {
-                        popoverTimeoutRef.current = setTimeout(() => {
-                          setPopoverAnchor(null);
-                          setHoveredServerId(null);
-                        }, 200);
-                      },
-                      sx: {
-                        pointerEvents: 'auto',
-                        ml: 1,
-                      },
-                    },
-                  }}
-                >
-                  <Paper
-                    sx={{
-                      p: 0,
-                      width: 280,
-                      bgcolor: 'background.paper',
-                      border: '1px solid',
-                      borderColor: 'divider',
-                      borderRadius: 2,
-                      overflow: 'hidden',
                     }}
                   >
-                    {/* Banner */}
-                    {server.banner && (
-                      <Box
-                        sx={{
-                          width: '100%',
-                          height: 120,
-                          backgroundImage: `url('${server.banner}')`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }}
-                      />
-                    )}
-
-                    {/* Content */}
-                    <Box 
-                      sx={{ p: 2, cursor: 'pointer' }}
-                      onClick={() => {
-                        handleSelectServer(server.id);
-                        setPopoverAnchor(null);
-                        setHoveredServerId(null);
+                    <Paper
+                      sx={{
+                        p: 0,
+                        width: 280,
+                        bgcolor: 'background.paper',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        borderRadius: 2,
+                        overflow: 'hidden',
                       }}
                     >
-                      <Typography variant="subtitle1" fontWeight={600}>
-                        {server.name}
-                      </Typography>
-                      {server.description && (
-                        <Typography variant="caption" sx={{ color: 'text.secondary', mt: 1, display: 'block' }}>
-                          {server.description}
-                        </Typography>
+                      {/* Banner */}
+                      {server.banner && (
+                        <Box
+                          sx={{
+                            width: '100%',
+                            height: 120,
+                            background: server.banner.startsWith('http') 
+                              ? `url('${server.banner}')` 
+                              : server.banner,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                          }}
+                        />
                       )}
-                      <Typography variant="caption" sx={{ color: 'text.secondary', mt: 2, display: 'block' }}>
-                        {server.members?.length || 1} {t('members') || 'members'}
-                      </Typography>
-                    </Box>
-                  </Paper>
-                </Popover>
-              </Box>
-            ))}
+
+                      {/* Content */}
+                      <Box 
+                        sx={{ p: 2, cursor: 'pointer' }}
+                        onClick={() => {
+                          handleSelectServer(server.id);
+                          setPopoverAnchor(null);
+                          setHoveredServerId(null);
+                        }}
+                      >
+                        <Typography variant="subtitle1" fontWeight={600}>
+                          {server.name}
+                        </Typography>
+                        {server.description && (
+                          <Typography variant="caption" sx={{ color: 'text.secondary', mt: 1, display: 'block' }}>
+                            {server.description}
+                          </Typography>
+                        )}
+                        <Typography variant="caption" sx={{ color: 'text.secondary', mt: 2, display: 'block' }}>
+                          {server.members?.length || 1} {t('members') || 'members'}
+                        </Typography>
+                      </Box>
+                    </Paper>
+                  </Popover>
+                </Box>
+              );
+            })}
             
             {/* Кнопка створення сервера */}
             <Tooltip title={t('addServer')} placement="right">
