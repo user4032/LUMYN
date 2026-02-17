@@ -150,7 +150,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
       <Box
         sx={(theme) => ({
           width: 72,
-          bgcolor: theme.palette.mode === 'dark' ? '#202225' : '#f2f3f5',
+          bgcolor: theme.palette.mode === 'dark' ? '#0A0A0A' : '#f2f3f5',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -245,13 +245,21 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
               width: 48,
               height: 48,
               borderRadius: currentView === 'chats' ? '35%' : '50%',
-              bgcolor: currentView === 'chats' ? theme.palette.primary.main : 'transparent',
-              color: currentView === 'chats' ? '#ffffff' : theme.palette.text.secondary,
+              bgcolor: currentView === 'chats' 
+                ? (theme.palette.mode === 'dark' ? '#FFFFFF' : theme.palette.primary.main)
+                : 'transparent',
+              color: currentView === 'chats' 
+                ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
+                : theme.palette.text.secondary,
               transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
               '&:hover': {
                 borderRadius: '35%',
-                bgcolor: currentView === 'chats' ? theme.palette.primary.dark : theme.palette.action.hover,
-                color: currentView === 'chats' ? '#ffffff' : theme.palette.text.primary,
+                bgcolor: currentView === 'chats' 
+                  ? (theme.palette.mode === 'dark' ? '#E5E5E5' : theme.palette.primary.dark)
+                  : theme.palette.action.hover,
+                color: currentView === 'chats' 
+                  ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
+                  : theme.palette.text.primary,
               },
             })}
           >
@@ -290,14 +298,27 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
               width: 48,
               height: 48,
               borderRadius: currentView === 'servers' || serversExpanded ? '35%' : '50%',
-              bgcolor: currentView === 'servers' || serversExpanded ? theme.palette.primary.main : 'transparent',
-              color: currentView === 'servers' || serversExpanded ? '#ffffff' : theme.palette.text.secondary,
+              bgcolor: currentView === 'servers' || serversExpanded 
+                ? (theme.palette.mode === 'dark' ? '#FFFFFF' : theme.palette.primary.main)
+                : 'transparent',
+              color: currentView === 'servers' || serversExpanded 
+                ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
+                : theme.palette.text.secondary,
               transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
               '&:hover': {
                 borderRadius: '35%',
-                bgcolor: currentView === 'servers' || serversExpanded ? theme.palette.primary.dark : theme.palette.action.hover,
-                color: currentView === 'servers' || serversExpanded ? '#ffffff' : theme.palette.text.primary,
+                bgcolor: currentView === 'servers' || serversExpanded 
+                  ? (theme.palette.mode === 'dark' ? '#E5E5E5' : theme.palette.primary.dark)
+                  : theme.palette.action.hover,
+                color: currentView === 'servers' || serversExpanded 
+                  ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
+                  : theme.palette.text.primary,
               },
+            })}
+          >
+            <BrutalServersIcon />
+          </IconButton>
+        </Tooltip>
             })}
           >
             <BrutalServersIcon />
@@ -342,20 +363,24 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
                 }}
                 sx={{
                   display: 'flex',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                }}
-              >
-                {(() => {
-                  const isHovered = hoveredServerId === server.id;
-                  return (
-                <Avatar
-                  src={server.icon || undefined}
-                  sx={(theme) => ({
-                    width: 48,
-                    height: 48,
-                    bgcolor: activeServer === server.id || isHovered
-                      ? theme.palette.primary.main
+                  justif(theme.palette.mode === 'dark' ? '#FFFFFF' : theme.palette.primary.main)
+                      : theme.palette.mode === 'dark'
+                        ? '#36393f'
+                        : '#ffffff',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    borderRadius: activeServer === server.id || isHovered ? '35%' : '50%',
+                    color: activeServer === server.id || isHovered 
+                      ? (theme.palette.mode === 'dark' ? '#000000' : '#ffffff')
+                      : theme.palette.text.primary,
+                    position: 'relative',
+                    '&:hover': {
+                      borderRadius: '35%',
+                      bgcolor: activeServer === server.id 
+                        ? (theme.palette.mode === 'dark' ? '#E5E5E5' : theme.palette.primary.dark)
+                        : (theme.palette.mode === 'dark' ? '#FFFFFF' : theme.palette.primary.main),
+                      color: theme.palette.mode === 'dark' ? '#000000' me.palette.primary.main
                       : theme.palette.mode === 'dark'
                         ? '#36393f'
                         : '#ffffff',
@@ -579,7 +604,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
                 height: 14,
                 borderRadius: '50%',
                 border: '2px solid',
-                borderColor: (theme) => theme.palette.mode === 'dark' ? '#202225' : '#f2f3f5',
+                borderColor: (theme) => theme.palette.mode === 'dark' ? '#0A0A0A' : '#f2f3f5',
                 bgcolor: currentUser?.status === 'online' ? '#3ba55d' 
                   : currentUser?.status === 'idle' ? '#faa81a'
                   : currentUser?.status === 'dnd' ? '#ed4245'
