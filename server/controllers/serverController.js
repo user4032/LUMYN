@@ -203,6 +203,97 @@ const updateChannel = async (req, res, next) => {
   }
 };
 
+/**
+ * POST /servers/:serverId/roles
+ * Create role
+ */
+const createRole = async (req, res, next) => {
+  try {
+    const { serverId } = req.params;
+    const { name, color, permissions } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ ok: false, error: 'Role name is required' });
+    }
+
+    const server = await serverService.createRole(req.user._id, serverId, name, color, permissions);
+    res.json({ ok: true, server });
+  } catch (error) {
+    if (error.message === 'Server not found') {
+      return res.status(404).json({ ok: false, error: error.message });
+    }
+    if (error.message === 'No permission to create roles' || error.message === 'Not a member') {
+      return res.status(403).json({ ok: false, error: error.message });
+    }
+    next(error);
+  }
+};
+
+/**
+ * PATCH /servers/:serverId/roles/:roleId
+ * Update role
+ */
+const updateRole = async (req, res, next) => {
+  try {
+    const { serverId, roleId } = req.params;
+    const server = await serverService.updateRole(req.user._id, serverId, roleId, req.body);
+    res.json({ ok: true, server });
+  } catch (error) {
+    if (error.message === 'Server not found' || error.message === 'Role not found') {
+      return res.status(404).json({ ok: false, error: error.message });
+    }
+    if (error.message === 'No permission to update roles' || error.message === 'Not a member') {
+      return res.status(403).json({ ok: false, error: error.message });
+    }
+    next(error);
+  }
+};
+
+/**
+ * DELETE /servers/:serverId/roles/:roleId
+ * Delete role
+ */
+const deleteRole = async (req, res, next) => {
+  try {
+    const { serverId, roleId } = req.params;
+    const server = await serverService.deleteRole(req.user._id, serverId, roleId);
+    res.json({ ok: true, server });
+  } catch (error) {
+    if (error.message === 'Server not found' || error.message === 'Role not found') {
+      return res.status(404).json({ ok: false, error: error.message });
+    }
+    if (error.message === 'Cannot delete @everyone role') {
+      return res.status(400).json({ ok: false, error: error.message });
+    }
+    if (error.message === 'No permission to delete roles' || error.message === 'Not a member') {
+      return res.status(403).json({ ok: false, error: error.message });
+    }
+    next(error);
+  }
+};
+
+/**
+ * POST /servers/:serverId/members/:userId/role
+ * Assign role to member
+ */
+const assignRole = async (req, res, next) => {
+  try {
+    const { serverId, userId } = req.params;
+    const { roleId } = req.body;
+    
+    const server = await serverService.assignRole(req.user._id, serverId, userId, roleId);
+    res.json({ ok: true, server });
+  } catch (error) {
+    if (error.message === 'Server not found' || error.message === 'Role not found' || error.message === 'Target user is not a member') {
+      return res.status(404).json({ ok: false, error: error.message });
+    }
+    if (error.message === 'No permission to assign roles' || error.message === 'Not a member') {
+      return res.status(403).json({ ok: false, error: error.message });
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   getMyServers,
   createServer,
@@ -214,4 +305,8 @@ module.exports = {
   createChannel,
   deleteChannel,
   updateChannel,
+  createRole,
+  updateRole,
+  deleteRole,
+  assignRole,
 };

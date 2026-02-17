@@ -1,6 +1,6 @@
 const Server = require('../models/Server');
 const User = require('../models/User');
-const { createInviteCode } = require('../utils/crypto');
+const { createInviteCode, createRandomGradient } = require('../utils/crypto');
 
 /**
  * Get all user's servers
@@ -16,6 +16,7 @@ const getUserServers = async (userId) => {
 const createServer = async (userId, user, name, channels, banner) => {
   const serverId = `srv_${Date.now()}`;
   const inviteCode = createInviteCode();
+  const serverBanner = banner || createRandomGradient();
 
   const server = await Server.create({
     serverId,
@@ -24,7 +25,7 @@ const createServer = async (userId, user, name, channels, banner) => {
     ownerId: userId,
     description: '',
     icon: '',
-    banner: banner || '',
+    banner: serverBanner,
     members: [
       {
         userId,
@@ -263,6 +264,135 @@ const updateChannel = async (userId, serverId, channelId, updates) => {
   return { ...channel.toObject(), serverId: server.serverId };
 };
 
+/**
+ * Create role
+ */
+const createRole = async (userId, serverId, name, color, permissions) => {
+  const server = await Server.findOne({ serverId });
+  if (!server) throw new Error('Server not found');
+  
+  const member = server.members.find(m => m.userId.toString() === userId.toString());
+  if (!member) throw new Error('Not a member');
+  
+  const isOwner = server.ownerId.toString() === userId.toString();
+  const hasPermission = member.permissions?.get('admin') || member.permissions?.get('manage_roles');
+  
+  if (!isOwner && !hasPermission) {
+    throw new Error('No permission to create roles');
+  }
+
+  const roleId = `role_${Date.now()}`;
+  server.roles = server.roles || [];
+  server.roles.push({
+    roleId,
+    name: String(name).trim(),
+    color: color || '#99AAB5',
+    permissions: permissions || ['send_messages'],
+    position: server.roles.length,
+  });
+
+  await server.save();
+  return server.toObject();
+};
+
+/**
+ * Update role
+ */
+const updateRole = async (userId, serverId, roleId, updates) => {
+  const server = await Server.findOne({ serverId });
+  if (!server) throw new Error('Server not found');
+  
+  const member = server.members.find(m => m.userId.toString() === userId.toString());
+  if (!member) throw new Error('Not a member');
+  
+  const isOwner = server.ownerId.toString() === userId.toString();
+  const hasPermission = member.permissions?.get('admin') || member.permissions?.get('manage_roles');
+  
+  if (!isOwner && !hasPermission) {
+    throw new Error('No permission to update roles');
+  }
+
+  const role = server.roles.find(r => r.roleId === roleId);
+  if (!role) throw new Error('Role not found');
+
+  if (updates.name) role.name = String(updates.name).trim();
+  if (updates.color) role.color = updates.color;
+  if (updates.permissions) role.permissions = updates.permissions;
+  if (updates.position !== undefined) role.position = updates.position;
+
+  await server.save();
+  return server.toObject();
+};
+
+/**
+ * Delete role
+ */
+const deleteRole = async (userId, serverId, roleId) => {
+  const server = await Server.findOne({ serverId });
+  if (!server) throw new Error('Server not found');
+  
+  const member = server.members.find(m => m.userId.toString() === userId.toString());
+  if (!member) throw new Error('Not a member');
+  
+  const isOwner = server.ownerId.toString() === userId.toString();
+  const hasPermission = member.permissions?.get('admin') || member.permissions?.get('manage_roles');
+  
+  if (!isOwner && !hasPermission) {
+    throw new Error('No permission to delete roles');
+  }
+
+  if (roleId === 'everyone') {
+    throw new Error('Cannot delete @everyone role');
+  }
+
+  server.roles = server.roles.filter(r => r.roleId !== roleId);
+  
+  // Remove this role from all members
+  server.memberRoles = server.memberRoles || new Map();
+  for (const [memberId, assignedRoleId] of server.memberRoles.entries()) {
+    if (assignedRoleId === roleId) {
+      server.memberRoles.delete(memberId);
+    }
+  }
+
+  await server.save();
+  return server.toObject();
+};
+
+/**
+ * Assign role to member
+ */
+const assignRole = async (userId, serverId, targetUserId, roleId) => {
+  const server = await Server.findOne({ serverId });
+  if (!server) throw new Error('Server not found');
+  
+  const member = server.members.find(m => m.userId.toString() === userId.toString());
+  if (!member) throw new Error('Not a member');
+  
+  const isOwner = server.ownerId.toString() === userId.toString();
+  const hasPermission = member.permissions?.get('admin') || member.permissions?.get('manage_roles');
+  
+  if (!isOwner && !hasPermission) {
+    throw new Error('No permission to assign roles');
+  }
+
+  const targetMember = server.members.find(m => m.userId.toString() === targetUserId.toString());
+  if (!targetMember) throw new Error('Target user is not a member');
+
+  const role = server.roles.find(r => r.roleId === roleId);
+  if (!role && roleId !== null) throw new Error('Role not found');
+
+  server.memberRoles = server.memberRoles || new Map();
+  if (roleId === null) {
+    server.memberRoles.delete(targetUserId);
+  } else {
+    server.memberRoles.set(targetUserId, roleId);
+  }
+
+  await server.save();
+  return server.toObject();
+};
+
 module.exports = {
   getUserServers,
   createServer,
@@ -274,4 +404,8 @@ module.exports = {
   createChannel,
   deleteChannel,
   updateChannel,
+  createRole,
+  updateRole,
+  deleteRole,
+  assignRole,
 };

@@ -87,6 +87,38 @@ const serverSchema = new mongoose.Schema({
   }],
   // Канали сервера
   channels: [channelSchema],
+  // Ролі сервера
+  roles: [{
+    roleId: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    color: {
+      type: String,
+      default: '#99AAB5',
+    },
+    permissions: [{
+      type: String,
+    }],
+    position: {
+      type: Number,
+      default: 0,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+  }],
+  // Мапа ролей для учасників {userId: roleId}
+  memberRoles: {
+    type: Map,
+    of: String,
+    default: {},
+  },
   // Налаштування
   settings: {
     isPublic: {
