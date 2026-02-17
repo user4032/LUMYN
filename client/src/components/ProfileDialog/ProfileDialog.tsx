@@ -221,6 +221,7 @@ const ProfileDialog: React.FC<ProfileDialogProps> = ({ open, onClose }) => {
         const updatedUser = {
           ...currentUser,
           ...response.user,
+          status: response.user.status || currentUser?.status || 'online',
         };
         
         console.log('Updating Redux with:', {

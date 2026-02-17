@@ -10,3 +10,12 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+interface Window {
+  electronAPI?: {
+    minimize?: () => void
+    maximize?: () => void
+    close?: () => void
+    [key: string]: any
+  }
+}

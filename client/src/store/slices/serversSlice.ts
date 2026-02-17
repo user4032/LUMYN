@@ -59,10 +59,10 @@ const serversSlice = createSlice({
   name: 'servers',
   initialState,
   reducers: {
-    setActiveServer: (state, action: PayloadAction<string>) => {
+    setActiveServer: (state, action: PayloadAction<string | null>) => {
       state.activeServer = action.payload;
     },
-    setActiveChannel: (state, action: PayloadAction<string>) => {
+    setActiveChannel: (state, action: PayloadAction<string | null>) => {
       state.activeChannel = action.payload;
     },
     setServers: (state, action: PayloadAction<Server[]>) => {
