@@ -33,6 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
   const [createServerOpen, setCreateServerOpen] = useState(false);
   const [popoverAnchor, setPopoverAnchor] = useState<HTMLElement | null>(null);
   const [hoveredServerId, setHoveredServerId] = useState<string | null>(null);
+  const [hoveredNavId, setHoveredNavId] = useState<string | null>(null);
   const popoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -236,8 +237,13 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
         </Box>
 
         {/* Навігація */}
-        <Tooltip title={t('chatsLabel')} placement="right">
+        <Box
+          onMouseEnter={() => setHoveredNavId('chats')}
+          onMouseLeave={() => setHoveredNavId(null)}
+          sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
           <IconButton
+            aria-label={t('chatsLabel')}
             onClick={() => {
               onViewChange('chats');
               setServersExpanded(false);
@@ -258,12 +264,51 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
           >
             <BrutalChatIcon />
           </IconButton>
-        </Tooltip>
+          <Box
+            sx={(theme) => ({
+              position: 'absolute',
+              left: 'calc(100% + 10px)',
+              top: '50%',
+              transform: hoveredNavId === 'chats'
+                ? 'translateY(-50%) translateX(0)'
+                : 'translateY(-50%) translateX(-6px)',
+              opacity: hoveredNavId === 'chats' ? 1 : 0,
+              pointerEvents: 'none',
+              whiteSpace: 'nowrap',
+              px: 1.25,
+              py: 0.6,
+              borderRadius: 2,
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              letterSpacing: '0.01em',
+              color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#0f172a',
+              background:
+                theme.palette.mode === 'dark'
+                  ? 'rgba(15, 23, 42, 0.92)'
+                  : 'rgba(255, 255, 255, 0.95)',
+              border: '1px solid',
+              borderColor: theme.palette.divider,
+              boxShadow:
+                theme.palette.mode === 'dark'
+                  ? '0 10px 24px rgba(0,0,0,0.35)'
+                  : '0 10px 24px rgba(15,23,42,0.12)',
+              transition: 'all 0.2s ease',
+              zIndex: 6,
+            })}
+          >
+            {t('chatsLabel')}
+          </Box>
+        </Box>
 
         {/* Threads temporarily unavailable */}
-        <Tooltip title={`${t('threadsLabel')} - ${t('unavailable')}`} placement="right">
+        <Box
+          onMouseEnter={() => setHoveredNavId('threads')}
+          onMouseLeave={() => setHoveredNavId(null)}
+          sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
           <span>
             <IconButton
+              aria-label={t('threadsLabel')}
               disabled
               sx={(theme) => ({
                 width: 48,
@@ -277,10 +322,49 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
               <ThreadsIcon />
             </IconButton>
           </span>
-        </Tooltip>
+          <Box
+            sx={(theme) => ({
+              position: 'absolute',
+              left: 'calc(100% + 10px)',
+              top: '50%',
+              transform: hoveredNavId === 'threads'
+                ? 'translateY(-50%) translateX(0)'
+                : 'translateY(-50%) translateX(-6px)',
+              opacity: hoveredNavId === 'threads' ? 1 : 0,
+              pointerEvents: 'none',
+              whiteSpace: 'nowrap',
+              px: 1.25,
+              py: 0.6,
+              borderRadius: 2,
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              letterSpacing: '0.01em',
+              color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#0f172a',
+              background:
+                theme.palette.mode === 'dark'
+                  ? 'rgba(15, 23, 42, 0.92)'
+                  : 'rgba(255, 255, 255, 0.95)',
+              border: '1px solid',
+              borderColor: theme.palette.divider,
+              boxShadow:
+                theme.palette.mode === 'dark'
+                  ? '0 10px 24px rgba(0,0,0,0.35)'
+                  : '0 10px 24px rgba(15,23,42,0.12)',
+              transition: 'all 0.2s ease',
+              zIndex: 6,
+            })}
+          >
+            {`${t('threadsLabel')} · ${t('unavailable')}`}
+          </Box>
+        </Box>
 
-        <Tooltip title={serversExpanded ? t('hideServers') : t('serversLabel')} placement="right">
+        <Box
+          onMouseEnter={() => setHoveredNavId('servers')}
+          onMouseLeave={() => setHoveredNavId(null)}
+          sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
           <IconButton
+            aria-label={serversExpanded ? t('hideServers') : t('serversLabel')}
             onClick={() => {
               if (!serversExpanded) {
                 onViewChange('servers');
@@ -303,7 +387,41 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
           >
             <BrutalServersIcon />
           </IconButton>
-        </Tooltip>
+          <Box
+            sx={(theme) => ({
+              position: 'absolute',
+              left: 'calc(100% + 10px)',
+              top: '50%',
+              transform: hoveredNavId === 'servers'
+                ? 'translateY(-50%) translateX(0)'
+                : 'translateY(-50%) translateX(-6px)',
+              opacity: hoveredNavId === 'servers' ? 1 : 0,
+              pointerEvents: 'none',
+              whiteSpace: 'nowrap',
+              px: 1.25,
+              py: 0.6,
+              borderRadius: 2,
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              letterSpacing: '0.01em',
+              color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#0f172a',
+              background:
+                theme.palette.mode === 'dark'
+                  ? 'rgba(15, 23, 42, 0.92)'
+                  : 'rgba(255, 255, 255, 0.95)',
+              border: '1px solid',
+              borderColor: theme.palette.divider,
+              boxShadow:
+                theme.palette.mode === 'dark'
+                  ? '0 10px 24px rgba(0,0,0,0.35)'
+                  : '0 10px 24px rgba(15,23,42,0.12)',
+              transition: 'all 0.2s ease',
+              zIndex: 6,
+            })}
+          >
+            {serversExpanded ? t('hideServers') : t('serversLabel')}
+          </Box>
+        </Box>
 
         {/* Список серверів */}
         {serversExpanded && (
@@ -462,7 +580,9 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
                         sx={{
                           width: '100%',
                           height: 120,
-                          backgroundImage: `url('${server.banner}')`,
+                          background: server.banner.startsWith('http')
+                            ? `url('${server.banner}')`
+                            : server.banner,
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                         }}
@@ -526,8 +646,13 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
         <Box sx={{ flexGrow: 1 }} />
 
         {/* Нижні кнопки */}
-        <Tooltip title={t('notificationsLabel')} placement="right">
+        <Box
+          onMouseEnter={() => setHoveredNavId('notifications')}
+          onMouseLeave={() => setHoveredNavId(null)}
+          sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
           <IconButton
+            aria-label={t('notificationsLabel')}
             onClick={() => setShowNotifications(!showNotifications)}
             sx={(theme) => ({
               width: 48,
@@ -544,10 +669,49 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
               <BrutalBellIcon />
             </Badge>
           </IconButton>
-        </Tooltip>
+          <Box
+            sx={(theme) => ({
+              position: 'absolute',
+              left: 'calc(100% + 10px)',
+              top: '50%',
+              transform: hoveredNavId === 'notifications'
+                ? 'translateY(-50%) translateX(0)'
+                : 'translateY(-50%) translateX(-6px)',
+              opacity: hoveredNavId === 'notifications' ? 1 : 0,
+              pointerEvents: 'none',
+              whiteSpace: 'nowrap',
+              px: 1.25,
+              py: 0.6,
+              borderRadius: 2,
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              letterSpacing: '0.01em',
+              color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#0f172a',
+              background:
+                theme.palette.mode === 'dark'
+                  ? 'rgba(15, 23, 42, 0.92)'
+                  : 'rgba(255, 255, 255, 0.95)',
+              border: '1px solid',
+              borderColor: theme.palette.divider,
+              boxShadow:
+                theme.palette.mode === 'dark'
+                  ? '0 10px 24px rgba(0,0,0,0.35)'
+                  : '0 10px 24px rgba(15,23,42,0.12)',
+              transition: 'all 0.2s ease',
+              zIndex: 6,
+            })}
+          >
+            {t('notificationsLabel')}
+          </Box>
+        </Box>
 
-        <Tooltip title={t('settingsLabel')} placement="right">
+        <Box
+          onMouseEnter={() => setHoveredNavId('settings')}
+          onMouseLeave={() => setHoveredNavId(null)}
+          sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
           <IconButton
+            aria-label={t('settingsLabel')}
             onClick={() => setSettingsOpen(true)}
             sx={(theme) => ({
               width: 48,
@@ -562,7 +726,41 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
           >
             <BrutalSettingsIcon />
           </IconButton>
-        </Tooltip>
+          <Box
+            sx={(theme) => ({
+              position: 'absolute',
+              left: 'calc(100% + 10px)',
+              top: '50%',
+              transform: hoveredNavId === 'settings'
+                ? 'translateY(-50%) translateX(0)'
+                : 'translateY(-50%) translateX(-6px)',
+              opacity: hoveredNavId === 'settings' ? 1 : 0,
+              pointerEvents: 'none',
+              whiteSpace: 'nowrap',
+              px: 1.25,
+              py: 0.6,
+              borderRadius: 2,
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              letterSpacing: '0.01em',
+              color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#0f172a',
+              background:
+                theme.palette.mode === 'dark'
+                  ? 'rgba(15, 23, 42, 0.92)'
+                  : 'rgba(255, 255, 255, 0.95)',
+              border: '1px solid',
+              borderColor: theme.palette.divider,
+              boxShadow:
+                theme.palette.mode === 'dark'
+                  ? '0 10px 24px rgba(0,0,0,0.35)'
+                  : '0 10px 24px rgba(15,23,42,0.12)',
+              transition: 'all 0.2s ease',
+              zIndex: 6,
+            })}
+          >
+            {t('settingsLabel')}
+          </Box>
+        </Box>
 
         {/* Аватар користувача */}
         <Tooltip 
