@@ -213,6 +213,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
                     height: '100%',
                     objectFit: 'cover',
                     borderRadius: '50%',
+                    filter: 'invert(1)',
                   }}
                 />
               )}

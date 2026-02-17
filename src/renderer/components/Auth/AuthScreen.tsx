@@ -9,7 +9,10 @@ import {
   Divider,
   InputAdornment,
   IconButton,
+  Fade,
+  Collapse,
 } from '@mui/material';
+import { keyframes } from '@mui/system';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/store';
 import { t } from '@i18n/index';
@@ -29,6 +32,28 @@ interface AuthScreenProps {
 
 type Mode = 'login' | 'register' | 'verify';
 
+// Keyframes для анімації градієнту
+const gradientShift = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+`;
+
+const floatAnimation = keyframes`
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+`;
+
 const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
   const [mode, setMode] = React.useState<Mode>('login');
   const [email, setEmail] = React.useState('');
@@ -41,7 +66,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [resendTimer, setResendTimer] = React.useState(0);
-  const showBrandPanel = mode === 'register';
+  const showBrandPanel = mode !== 'verify';
 
   const emailValid = /\S+@\S+\.\S+/.test(email.trim());
   const nameValid = displayName.trim().length >= 5;
@@ -177,226 +202,407 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
         p: 3,
       }}
     >
-      <Paper
-        elevation={0}
-        sx={{
-          width: '100%',
-          maxWidth: showBrandPanel ? 860 : 420,
-          borderRadius: 3,
-          border: '1px solid',
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
-          overflow: 'hidden',
-        }}
-      >
-        <Box
+      <Fade in timeout={600}>
+        <Paper
+          elevation={0}
           sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: showBrandPanel ? 'row' : 'column' },
+            width: '100%',
+            maxWidth: showBrandPanel ? 860 : 420,
+            borderRadius: 3,
+            border: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            overflow: 'hidden',
+            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
-          <Box sx={{ p: 4, flex: 1 }}>
-            <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
-              {t('authTitle')}
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
-              {mode === 'verify' ? t('authHint') : ''}
-            </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', md: showBrandPanel ? 'row' : 'column' },
+            }}
+          >
+            <Box sx={{ p: 4, flex: 1 }}>
+              <Fade in key={mode} timeout={400}>
+                <Box>
+                  <Typography 
+                    variant="h5" 
+                    sx={{ 
+                      fontWeight: 700, 
+                      mb: 1,
+                      animation: `${floatAnimation} 3s ease-in-out infinite`,
+                    }}
+                  >
+                    {t('authTitle')}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
+                    {mode === 'verify' ? t('authHint') : ''}
+                  </Typography>
+                </Box>
+              </Fade>
 
-            {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {error}
-              </Alert>
-            )}
-            {info && (
-              <Alert severity="info" sx={{ mb: 2 }}>
-                {info}
-              </Alert>
-            )}
+              {error && (
+                <Collapse in={Boolean(error)}>
+                  <Alert severity="error" sx={{ mb: 2 }}>
+                    {error}
+                  </Alert>
+                </Collapse>
+              )}
+              {info && (
+                <Collapse in={Boolean(info)}>
+                  <Alert severity="info" sx={{ mb: 2 }}>
+                    {info}
+                  </Alert>
+                </Collapse>
+              )}
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <TextField
-                label={t('email')}
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                fullWidth
-                disabled={loading || mode === 'verify'}
-                error={Boolean(email) && !emailValid}
-                helperText={Boolean(email) && !emailValid ? t('invalidEmail') : ' '}
-              />
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Fade in timeout={500}>
+                  <TextField
+                    label={t('email')}
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    fullWidth
+                    disabled={loading || mode === 'verify'}
+                    error={Boolean(email) && !emailValid}
+                    helperText={Boolean(email) && !emailValid ? t('invalidEmail') : ' '}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                        },
+                        '&.Mui-focused': {
+                          transform: 'translateY(-2px)',
+                        },
+                      },
+                    }}
+                  />
+                </Fade>
 
-          {mode !== 'verify' && (
-            <TextField
-              label={t('password')}
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              fullWidth
-              disabled={loading}
-              error={Boolean(password) && !passwordStrong}
-              helperText={Boolean(password) && !passwordStrong ? t('passwordWeak') : ' '}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      edge="end"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      aria-label={showPassword ? t('hidePassword') : t('showPassword')}
+                {mode !== 'verify' && (
+                  <Fade in timeout={600}>
+                    <TextField
+                      label={t('password')}
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      fullWidth
+                      disabled={loading}
+                      error={Boolean(password) && !passwordStrong}
+                      helperText={Boolean(password) && !passwordStrong ? t('passwordWeak') : ' '}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            transform: 'translateY(-2px)',
+                          },
+                          '&.Mui-focused': {
+                            transform: 'translateY(-2px)',
+                          },
+                        },
+                      }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              edge="end"
+                              onClick={() => setShowPassword((prev) => !prev)}
+                              aria-label={showPassword ? t('hidePassword') : t('showPassword')}
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Fade>
+                )}
+
+                {mode === 'register' && (
+                  <>
+                    <Fade in timeout={700}>
+                      <TextField
+                        label={t('displayName')}
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        fullWidth
+                        disabled={loading}
+                        error={Boolean(displayName) && !nameValid}
+                        helperText={Boolean(displayName) && !nameValid ? t('nameMin') : ' '}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                            },
+                            '&.Mui-focused': {
+                              transform: 'translateY(-2px)',
+                            },
+                          },
+                        }}
+                      />
+                    </Fade>
+                    <Fade in timeout={800}>
+                      <TextField
+                        label={t('usernameLabel')}
+                        value={username}
+                        onChange={(e) => {
+                          const filtered = e.target.value.replace(/[^a-zA-Z0-9._-]/g, '');
+                          setUsername(filtered);
+                        }}
+                        fullWidth
+                        disabled={loading}
+                        error={Boolean(username) && !usernameValid}
+                        helperText={
+                          Boolean(username) && !usernameValid
+                            ? t('usernameInvalidChars')
+                            : t('usernameHint')
+                        }
+                        placeholder="john_doe"
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                            },
+                            '&.Mui-focused': {
+                              transform: 'translateY(-2px)',
+                            },
+                          },
+                        }}
+                      />
+                    </Fade>
+                  </>
+                )}
+
+                {mode === 'verify' && (
+                  <Fade in timeout={500}>
+                    <TextField
+                      label={t('verificationCode')}
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      fullWidth
+                      disabled={loading}
+                      autoFocus
+                      helperText={' '}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            transform: 'translateY(-2px)',
+                          },
+                          '&.Mui-focused': {
+                            transform: 'translateY(-2px)',
+                          },
+                        },
+                      }}
+                    />
+                  </Fade>
+                )}
+
+                {mode === 'login' && (
+                  <Fade in timeout={600}>
+                    <Button
+                      variant="contained"
+                      onClick={handleLogin}
+                      disabled={loading || !email || !password || !emailValid || !passwordStrong}
+                      sx={{
+                        py: 1.5,
+                        fontWeight: 600,
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: 4,
+                        },
+                        '&:active': {
+                          transform: 'translateY(0px)',
+                        },
+                      }}
                     >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          )}
+                      {t('login')}
+                    </Button>
+                  </Fade>
+                )}
 
-          {mode === 'register' && (
-            <>
-              <TextField
-                label={t('displayName')}
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                fullWidth
-                disabled={loading}
-                error={Boolean(displayName) && !nameValid}
-                helperText={Boolean(displayName) && !nameValid ? t('nameMin') : ' '}
-              />
-              <TextField
-                label={t('usernameLabel')}
-                value={username}
-                onChange={(e) => {
-                  const filtered = e.target.value.replace(/[^a-zA-Z0-9._-]/g, '');
-                  setUsername(filtered);
-                }}
-                fullWidth
-                disabled={loading}
-                error={Boolean(username) && !usernameValid}
-                helperText={
-                  Boolean(username) && !usernameValid
-                    ? t('usernameInvalidChars')
-                    : t('usernameHint')
-                }
-                placeholder="john_doe"
-              />
-            </>
-          )}
+                {mode === 'register' && (
+                  <Fade in timeout={900}>
+                    <Button
+                      variant="contained"
+                      onClick={handleRegister}
+                      disabled={loading || !email || !password || !emailValid || !nameValid || !passwordStrong}
+                      sx={{
+                        py: 1.5,
+                        fontWeight: 600,
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: 4,
+                        },
+                        '&:active': {
+                          transform: 'translateY(0px)',
+                        },
+                      }}
+                    >
+                      {t('sendCode')}
+                    </Button>
+                  </Fade>
+                )}
 
-          {mode === 'verify' && (
-            <TextField
-              label={t('verificationCode')}
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              fullWidth
-              disabled={loading}
-              autoFocus
-              helperText={' '}
-            />
-          )}
-
-          {mode === 'login' && (
-            <Button
-              variant="contained"
-              onClick={handleLogin}
-              disabled={loading || !email || !password || !emailValid || !passwordStrong}
-            >
-              {t('login')}
-            </Button>
-          )}
-
-          {mode === 'register' && (
-            <Button
-              variant="contained"
-              onClick={handleRegister}
-              disabled={loading || !email || !password || !emailValid || !nameValid || !passwordStrong}
-            >
-              {t('sendCode')}
-            </Button>
-          )}
-
-          {mode === 'verify' && (
-            <Button variant="contained" onClick={handleVerify} disabled={loading || !code || !email}>
-              {t('verify')}
-            </Button>
-          )}
-        </Box>
-
-            <Divider sx={{ my: 3 }} />
-
-            {mode === 'login' && (
-              <Button variant="text" onClick={() => setMode('register')} disabled={loading}>
-                {t('register')}
-              </Button>
-            )}
-
-            {mode === 'register' && (
-              <Button variant="text" onClick={() => setMode('login')} disabled={loading}>
-                {t('backToLogin')}
-              </Button>
-            )}
-
-            {mode === 'verify' && (
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap' }}>
-                <Button variant="text" onClick={() => setMode('login')} disabled={loading}>
-                  {t('backToLogin')}
-                </Button>
-                <Button
-                  variant="text"
-                  onClick={handleResend}
-                  disabled={loading || !email || resendTimer > 0}
-                >
-                  {resendTimer > 0 ? `${t('resendCode')} (${resendTimer})` : t('resendCode')}
-                </Button>
+                {mode === 'verify' && (
+                  <Fade in timeout={600}>
+                    <Button 
+                      variant="contained" 
+                      onClick={handleVerify} 
+                      disabled={loading || !code || !email}
+                      sx={{
+                        py: 1.5,
+                        fontWeight: 600,
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: 4,
+                        },
+                        '&:active': {
+                          transform: 'translateY(0px)',
+                        },
+                      }}
+                    >
+                      {t('verify')}
+                    </Button>
+                  </Fade>
+                )}
               </Box>
+
+              <Divider sx={{ my: 3 }} />
+
+              {mode === 'login' && (
+                <Fade in timeout={700}>
+                  <Button 
+                    variant="text" 
+                    onClick={() => setMode('register')} 
+                    disabled={loading}
+                    sx={{
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateX(5px)',
+                      },
+                    }}
+                  >
+                    {t('register')}
+                  </Button>
+                </Fade>
+              )}
+
+              {mode === 'register' && (
+                <Fade in timeout={700}>
+                  <Button 
+                    variant="text" 
+                    onClick={() => setMode('login')} 
+                    disabled={loading}
+                    sx={{
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateX(5px)',
+                      },
+                    }}
+                  >
+                    {t('backToLogin')}
+                  </Button>
+                </Fade>
+              )}
+
+              {mode === 'verify' && (
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap' }}>
+                  <Button variant="text" onClick={() => setMode('login')} disabled={loading}>
+                    {t('backToLogin')}
+                  </Button>
+                  <Button
+                    variant="text"
+                    onClick={handleResend}
+                    disabled={loading || !email || resendTimer > 0}
+                  >
+                    {resendTimer > 0 ? `${t('resendCode')} (${resendTimer})` : t('resendCode')}
+                  </Button>
+                </Box>
+              )}
+            </Box>
+
+            {showBrandPanel && (
+              <Fade in timeout={800}>
+                <Box
+                  sx={{
+                    width: { xs: '100%', md: 320 },
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 2,
+                    p: 4,
+                    background: mode === 'register' 
+                      ? 'linear-gradient(-45deg, #0b0f14, #111827, #1e293b, #0f172a)'
+                      : 'linear-gradient(-45deg, #1e293b, #0f172a, #0b0f14, #111827)',
+                    backgroundSize: '400% 400%',
+                    animation: `${gradientShift} 15s ease infinite`,
+                    color: '#e5e7eb',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    transition: 'all 0.5s ease',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      inset: 0,
+                      background: mode === 'register'
+                        ? 'radial-gradient(260px circle at 20% 20%, rgba(34,197,94,0.3), transparent 60%), radial-gradient(260px circle at 80% 10%, rgba(99,102,241,0.3), transparent 60%)'
+                        : 'radial-gradient(260px circle at 80% 80%, rgba(59,130,246,0.3), transparent 60%), radial-gradient(260px circle at 20% 90%, rgba(168,85,247,0.3), transparent 60%)',
+                      opacity: 0.9,
+                      animation: `${gradientShift} 10s ease infinite`,
+                      transition: 'all 0.5s ease',
+                    },
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={appLogo}
+                    alt="LUMYN"
+                    sx={{
+                      width: 120,
+                      height: 120,
+                      objectFit: 'contain',
+                      zIndex: 1,
+                      filter: 'drop-shadow(0 12px 30px rgba(0,0,0,0.35))',
+                      animation: `${floatAnimation} 4s ease-in-out infinite`,
+                      transition: 'all 0.3s ease',
+                    }}
+                  />
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontWeight: 700, 
+                      zIndex: 1,
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    LUMYN
+                  </Typography>
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      color: '#cbd5f5', 
+                      zIndex: 1, 
+                      textAlign: 'center',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    {t('nextGenMessenger')}
+                  </Typography>
+                </Box>
+              </Fade>
             )}
           </Box>
-
-          {showBrandPanel && (
-            <Box
-              sx={{
-                width: { xs: '100%', md: 320 },
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 2,
-                p: 4,
-                background: 'linear-gradient(160deg, #0b0f14 0%, #111827 45%, #0f172a 100%)',
-                color: '#e5e7eb',
-                position: 'relative',
-                '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  inset: 0,
-                  background:
-                    'radial-gradient(260px circle at 20% 20%, rgba(34,197,94,0.25), transparent 60%), radial-gradient(260px circle at 80% 10%, rgba(99,102,241,0.25), transparent 60%)',
-                  opacity: 0.9,
-                },
-              }}
-            >
-              <Box
-                component="img"
-                src={appLogo}
-                alt="LUMYN"
-                sx={{
-                  width: 120,
-                  height: 120,
-                  objectFit: 'contain',
-                  zIndex: 1,
-                  filter: 'drop-shadow(0 12px 30px rgba(0,0,0,0.35))',
-                }}
-              />
-              <Typography variant="h6" sx={{ fontWeight: 700, zIndex: 1 }}>
-                LUMYN
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#cbd5f5', zIndex: 1, textAlign: 'center' }}>
-                {t('nextGenMessenger')}
-              </Typography>
-            </Box>
-          )}
-        </Box>
-      </Paper>
+        </Paper>
+      </Fade>
     </Box>
   );
 };

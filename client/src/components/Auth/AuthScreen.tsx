@@ -237,7 +237,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                     {t('authTitle')}
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
-                    {mode === 'verify' ? t('authHint') : mode === 'register' ? t('welcome') : t('welcomeBack')}
+                    {mode === 'verify' ? t('authHint') : ''}
                   </Typography>
                 </Box>
               </Fade>
@@ -598,20 +598,6 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                   >
                     {language === 'en' ? 'Next-gen messenger' : 'Месенджер нового покоління'}
                   </Typography>
-                  <Fade in key={mode} timeout={600}>
-                    <Typography 
-                      variant="h5" 
-                      sx={{ 
-                        fontWeight: 700, 
-                        zIndex: 1, 
-                        mt: 2,
-                        color: mode === 'register' ? '#22c55e' : '#3b82f6',
-                        transition: 'color 0.5s ease',
-                      }}
-                    >
-                      {mode === 'register' ? t('welcome') : t('welcomeBack')}
-                    </Typography>
-                  </Fade>
                 </Box>
               </Fade>
             )}

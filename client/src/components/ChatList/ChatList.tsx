@@ -221,7 +221,6 @@ const ChatList: React.FC<ChatListProps> = ({ selectedChat, onSelectChat }) => {
             >
               <PersonAddIcon fontSize="small" />
             </IconButton>
-            </IconButton>
           </Box>
         </Box>
         
