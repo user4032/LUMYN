@@ -99,11 +99,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: (theme) =>
-          theme.palette.mode === 'dark'
-            ? 'radial-gradient(800px circle at 10% 20%, rgba(34,197,94,0.2), transparent 55%), radial-gradient(900px circle at 90% 10%, rgba(99,102,241,0.2), transparent 60%), radial-gradient(700px circle at 80% 90%, rgba(16,185,129,0.12), transparent 60%), linear-gradient(120deg, #0b0f14 0%, #0d1117 35%, #0f172a 100%)'
-            : 'radial-gradient(800px circle at 10% 20%, rgba(16,185,129,0.18), transparent 55%), radial-gradient(900px circle at 90% 10%, rgba(79,70,229,0.18), transparent 60%), linear-gradient(120deg, #eef2ff 0%, #f8fafc 45%, #e2e8f0 100%)',
-        transition: 'background 0.5s ease-in-out',
+        background: (theme) => theme.palette.background.default,
         p: { xs: 0.5, sm: 2, md: 3 },
       }}
     >
@@ -112,15 +108,17 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
           elevation={0}
           sx={{
             width: '100%',
-            maxWidth: { xs: 370, sm: 420, md: showBrandPanel ? 860 : 420 },
-            borderRadius: { xs: 2, sm: 3 },
-            border: '1px solid',
-            borderColor: 'divider',
+            maxWidth: { xs: 370, sm: 420 },
+            borderRadius: 10,
             bgcolor: 'background.paper',
             overflow: 'hidden',
-            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-            boxShadow: { xs: 2, sm: 4 },
+            boxShadow: 'none',
+            border: 'none',
             m: { xs: 0.5, sm: 2 },
+            p: { xs: 2, sm: 3 },
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
           <Box
@@ -129,24 +127,12 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
               flexDirection: { xs: 'column', md: showBrandPanel ? 'row' : 'column' },
             }}
           >
-            <Box sx={{ p: { xs: 1.5, sm: 3, md: 4 }, flex: 1 }}>
-              <Fade in key={mode} timeout={400}>
-                <Box>
-                  <Typography 
-                    variant="h6"
-                    sx={{ 
-                      fontWeight: 700, 
-                      mb: { xs: 0.5, sm: 1 },
-                      fontSize: { xs: '1.2rem', sm: '1.5rem' },
-                    }}
-                  >
-                    {t('authTitle')}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary', mb: { xs: 1.5, sm: 3 }, fontSize: { xs: '0.95rem', sm: '1rem' } }}>
-                    {mode === 'verify' ? t('authHint') : ''}
-                  </Typography>
-                </Box>
-              </Fade>
+            <Box sx={{ width: '100%', maxWidth: 340, mx: 'auto', p: 0, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+                <Box component="img" src={appLogo} alt="LUMYN" sx={{ width: 44, height: 44, mb: 1, filter: 'none', borderRadius: 2 }} />
+                <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.1rem', mb: 0.5, letterSpacing: '-0.01em' }}>LUMYN</Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.95rem', mb: 0 }}>{t('authTitle')}</Typography>
+              </Box>
 
               {error && (
                 <Collapse in={Boolean(error)}>
@@ -163,29 +149,34 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                 </Collapse>
               )}
 
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.2, sm: 2 } }}>
-                <Fade in timeout={500}>
-                  <TextField
-                    label={t('email')}
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    fullWidth
-                    size="small"
-                    disabled={loading || mode === 'verify'}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                        },
-                        '&.Mui-focused': {
-                          transform: 'translateY(-2px)',
-                        },
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2, width: '100%' }}>
+                <TextField
+                  label={t('email')}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  fullWidth
+                  size="small"
+                  disabled={loading || mode === 'verify'}
+                  variant="outlined"
+                  sx={{
+                    mb: 1,
+                    '& .MuiOutlinedInput-root': {
+                      background: 'transparent',
+                      borderRadius: 2,
+                      boxShadow: 'none',
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      transition: 'border-color 0.2s',
+                      '&:hover': {
+                        borderColor: 'primary.main',
                       },
-                    }}
-                  />
-                </Fade>
+                      '&.Mui-focused': {
+                        borderColor: 'primary.main',
+                      },
+                    },
+                  }}
+                />
 
                 {mode !== 'verify' && (
                   <Fade in timeout={600}>
@@ -197,15 +188,21 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                       fullWidth
                       size="small"
                       disabled={loading}
-                      // error and helperText removed for password
+                      variant="outlined"
                       sx={{
+                        mb: 1,
                         '& .MuiOutlinedInput-root': {
-                          transition: 'all 0.3s ease',
+                          background: 'transparent',
+                          borderRadius: 2,
+                          boxShadow: 'none',
+                          border: '1px solid',
+                          borderColor: 'divider',
+                          transition: 'border-color 0.2s',
                           '&:hover': {
-                            transform: 'translateY(-2px)',
+                            borderColor: 'primary.main',
                           },
                           '&.Mui-focused': {
-                            transform: 'translateY(-2px)',
+                            borderColor: 'primary.main',
                           },
                         },
                       }}
@@ -216,6 +213,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                               edge="end"
                               onClick={() => setShowPassword((prev) => !prev)}
                               aria-label={showPassword ? t('hidePassword') : t('showPassword')}
+                              size="small"
                             >
                               {showPassword ? <VisibilityOff /> : <Visibility />}
                             </IconButton>
@@ -236,15 +234,21 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                         fullWidth
                         size="small"
                         disabled={loading}
-                        // error and helperText removed for displayName
+                        variant="outlined"
                         sx={{
+                          mb: 1,
                           '& .MuiOutlinedInput-root': {
-                            transition: 'all 0.3s ease',
+                            background: 'transparent',
+                            borderRadius: 2,
+                            boxShadow: 'none',
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            transition: 'border-color 0.2s',
                             '&:hover': {
-                              transform: 'translateY(-2px)',
+                              borderColor: 'primary.main',
                             },
                             '&.Mui-focused': {
-                              transform: 'translateY(-2px)',
+                              borderColor: 'primary.main',
                             },
                           },
                         }}
@@ -261,17 +265,23 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                         fullWidth
                         size="small"
                         disabled={loading}
-                        // error and helperText removed for username
+                        variant="outlined"
                         helperText={t('usernameHint')}
                         placeholder="john_doe"
                         sx={{
+                          mb: 1,
                           '& .MuiOutlinedInput-root': {
-                            transition: 'all 0.3s ease',
+                            background: 'transparent',
+                            borderRadius: 2,
+                            boxShadow: 'none',
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            transition: 'border-color 0.2s',
                             '&:hover': {
-                              transform: 'translateY(-2px)',
+                              borderColor: 'primary.main',
                             },
                             '&.Mui-focused': {
-                              transform: 'translateY(-2px)',
+                              borderColor: 'primary.main',
                             },
                           },
                         }}
@@ -289,18 +299,19 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                       onClick={handleLogin}
                       disabled={loading || !email || !password}
                       sx={{
-                        py: { xs: 1, sm: 1.5 },
+                        py: 1.1,
                         fontWeight: 600,
-                        fontSize: { xs: '1rem', sm: '1.1rem' },
-                        transition: 'all 0.3s ease',
+                        fontSize: '1rem',
                         borderRadius: 2,
+                        boxShadow: 'none',
+                        textTransform: 'none',
+                        background: 'primary.main',
+                        color: 'primary.contrastText',
                         '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: 4,
+                          background: 'primary.dark',
+                          boxShadow: 'none',
                         },
-                        '&:active': {
-                          transform: 'translateY(0px)',
-                        },
+                        mb: 1.5,
                       }}
                     >
                       {t('login')}
@@ -335,16 +346,19 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                       }}
                       disabled={loading || !email || !password || !displayName || !username}
                       sx={{
-                        py: 1.5,
+                        py: 1.1,
                         fontWeight: 600,
-                        transition: 'all 0.3s ease',
+                        fontSize: '1rem',
+                        borderRadius: 2,
+                        boxShadow: 'none',
+                        textTransform: 'none',
+                        background: 'primary.main',
+                        color: 'primary.contrastText',
                         '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: 4,
+                          background: 'primary.dark',
+                          boxShadow: 'none',
                         },
-                        '&:active': {
-                          transform: 'translateY(0px)',
-                        },
+                        mb: 1.5,
                       }}
                     >
                       {t('sendCode')}
@@ -355,120 +369,52 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                 {/* Кнопка підтвердження коду видалена */}
               </Box>
 
-              <Divider sx={{ my: 3 }} />
+              <Divider sx={{ my: 2, borderColor: 'divider' }} />
 
               {mode === 'login' && (
-                <Fade in timeout={700}>
-                  <Button 
-                    variant="text" 
-                    onClick={() => setMode('register')} 
-                    disabled={loading}
-                    sx={{
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateX(5px)',
-                      },
-                    }}
-                  >
-                    {t('register')}
-                  </Button>
-                </Fade>
+                <Button 
+                  variant="text" 
+                  onClick={() => setMode('register')} 
+                  disabled={loading}
+                  sx={{
+                    color: 'secondary.main',
+                    fontWeight: 500,
+                    fontSize: '0.97rem',
+                    textTransform: 'none',
+                    letterSpacing: '-0.01em',
+                    p: 0,
+                    minHeight: 0,
+                    minWidth: 0,
+                  }}
+                >
+                  {t('register')}
+                </Button>
               )}
 
               {mode === 'register' && (
-                <Fade in timeout={700}>
-                  <Button 
-                    variant="text" 
-                    onClick={() => setMode('login')} 
-                    disabled={loading}
-                    sx={{
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateX(5px)',
-                      },
-                    }}
-                  >
-                    {t('backToLogin')}
-                  </Button>
-                </Fade>
+                <Button 
+                  variant="text" 
+                  onClick={() => setMode('login')} 
+                  disabled={loading}
+                  sx={{
+                    color: 'secondary.main',
+                    fontWeight: 500,
+                    fontSize: '0.97rem',
+                    textTransform: 'none',
+                    letterSpacing: '-0.01em',
+                    p: 0,
+                    minHeight: 0,
+                    minWidth: 0,
+                  }}
+                >
+                  {t('backToLogin')}
+                </Button>
               )}
 
               {/* Кнопки для повторної відправки коду видалені */}
             </Box>
 
-            {showBrandPanel && (
-              <Fade in timeout={800}>
-                <Box
-                  sx={{
-                    width: { xs: '100%', md: 260 },
-                    minWidth: { xs: '100%', md: 200 },
-                    display: { xs: 'none', md: 'flex' },
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 2,
-                    p: { xs: 1.5, sm: 3, md: 4 },
-                    background: mode === 'register' 
-                      ? 'linear-gradient(-45deg, #0b0f14, #111827, #1e293b, #0f172a)'
-                      : 'linear-gradient(-45deg, #1e293b, #0f172a, #0b0f14, #111827)',
-                    backgroundSize: '400% 400%',
-                    animation: `${gradientShift} 15s ease infinite`,
-                    color: '#e5e7eb',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    transition: 'all 0.5s ease',
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      inset: 0,
-                      background: mode === 'register'
-                        ? 'radial-gradient(260px circle at 20% 20%, rgba(34,197,94,0.3), transparent 60%), radial-gradient(260px circle at 80% 10%, rgba(99,102,241,0.3), transparent 60%)'
-                        : 'radial-gradient(260px circle at 80% 80%, rgba(59,130,246,0.3), transparent 60%), radial-gradient(260px circle at 20% 90%, rgba(168,85,247,0.3), transparent 60%)',
-                      opacity: 0.9,
-                      animation: `${gradientShift} 10s ease infinite`,
-                      transition: 'all 0.5s ease',
-                    },
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={appLogo}
-                    alt="LUMYN"
-                    sx={{
-                      width: { xs: 80, sm: 100, md: 120 },
-                      height: { xs: 80, sm: 100, md: 120 },
-                      objectFit: 'contain',
-                      zIndex: 1,
-                      filter: 'drop-shadow(0 12px 30px rgba(0,0,0,0.35))',
-                      transition: 'all 0.3s ease',
-                    }}
-                  />
-                  <Typography 
-                    variant="h6" 
-                    sx={{ 
-                      fontWeight: 700, 
-                      zIndex: 1,
-                      fontSize: { xs: '1.1rem', sm: '1.2rem', md: '1.3rem' },
-                      transition: 'all 0.3s ease',
-                    }}
-                  >
-                    LUMYN
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      color: '#cbd5f5', 
-                      zIndex: 1, 
-                      textAlign: 'center',
-                      fontSize: { xs: '0.9rem', sm: '1rem' },
-                      transition: 'all 0.3s ease',
-                    }}
-                  >
-                    {language === 'en' ? 'Next-gen messenger' : 'Месенджер нового покоління'}
-                  </Typography>
-                </Box>
-              </Fade>
-            )}
+            {/* No side brand panel for minimalism */}
           </Box>
         </Paper>
       </Fade>
