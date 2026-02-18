@@ -1,0 +1,46 @@
+# Ignore node_modules everywhere
+**/node_modules
+
+# Ignore build outputs except for the main output directory (dist, build, public)
+**/dist
+!client/dist
+!server/dist
+**/build
+!client/build
+!server/build
+
+# Ignore .git and VCS
+.git
+.gitignore
+
+# Ignore logs, temp, cache
+**/*.log
+**/.cache
+**/tmp
+**/temp
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore test, coverage, docs (if not needed)
+**/tests
+**/coverage
+**/docs
+
+# Ignore platform/large release artifacts
+platform/
+release/
+
+# Ignore Electron build outputs
+**/win-unpacked
+**/*.exe
+**/*.blockmap
+
+# Ignore local env files
+.env
+.env.*
+
+# Ignore anything else not needed for deploy
+*.bak
+*.old

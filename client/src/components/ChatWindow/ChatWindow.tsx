@@ -1378,24 +1378,43 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, channelId, onSelectChat
                   <Paper
                     id={`message-${message.id}`}
                     onContextMenu={(e) => handleContextMenu(e, message.id)}
-                    sx={(theme) => ({
-                      px: hasContent ? 2 : 0.5,
-                      py: hasContent ? 1.5 : 0.5,
-                      bgcolor: hasContent ? (isMe ? theme.palette.primary.main : theme.palette.mode === 'dark' ? '#40444b' : '#f3f4f6') : 'transparent',
-                      color: isMe ? '#ffffff' : theme.palette.text.primary,
-                      borderRadius: 3,
-                      position: 'relative',
-                      cursor: 'pointer',
-                      boxShadow: 'none',
-                      border: 'none',
-                      transition: 'background-color 0.1s ease',
-                      '&:hover': {
-                        bgcolor: hasContent ? (isMe ? theme.palette.primary.dark : theme.palette.mode === 'dark' ? '#383a40' : '#e9eaed') : 'transparent',
-                        '& .reaction-btn': {
-                          opacity: 1,
+                    sx={(theme) => {
+                      // Визначаємо фон бульбашки
+                      const bubbleBg = hasContent
+                        ? (isMe
+                          ? theme.palette.primary.main
+                          : theme.palette.mode === 'dark' ? '#40444b' : '#f3f4f6')
+                        : 'transparent';
+                      // Визначаємо колір тексту
+                      let bubbleTextColor = theme.palette.text.primary;
+                      if (isMe && hasContent) {
+                        // Якщо бульбашка синя (primary), то текст білий
+                        bubbleTextColor = '#fff';
+                      } else if (!isMe && hasContent && theme.palette.mode === 'dark' && bubbleBg === '#f3f4f6') {
+                        // Якщо світла бульбашка на темному фоні — текст чорний
+                        bubbleTextColor = '#111';
+                      } else if (!isMe && hasContent && theme.palette.mode === 'dark' && bubbleBg === '#40444b') {
+                        bubbleTextColor = '#fff';
+                      }
+                      return {
+                        px: hasContent ? 2 : 0.5,
+                        py: hasContent ? 1.5 : 0.5,
+                        bgcolor: bubbleBg,
+                        color: bubbleTextColor,
+                        borderRadius: 3,
+                        position: 'relative',
+                        cursor: 'pointer',
+                        boxShadow: 'none',
+                        border: 'none',
+                        transition: 'background-color 0.1s ease',
+                        '&:hover': {
+                          bgcolor: hasContent ? (isMe ? theme.palette.primary.dark : theme.palette.mode === 'dark' ? '#383a40' : '#e9eaed') : 'transparent',
+                          '& .reaction-btn': {
+                            opacity: 1,
+                          },
                         },
-                      },
-                    })}
+                      };
+                    }}
                   >
                     {/* Відповідь на повідомлення */}
                     {message.replyTo && (() => {
